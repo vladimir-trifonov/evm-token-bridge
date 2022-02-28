@@ -1,15 +1,17 @@
 type StateType = {
-  provider?: any
-  web3Provider?: any
+  providerFrom?: any
+  web3ProviderFrom?: any
+  web3ProviderTo?: any
   address?: string
   chainId?: number
 }
 
 export type ActionType =
   | {
-    type: 'SET_WEB3_PROVIDER'
-    provider?: StateType['provider']
-    web3Provider?: StateType['web3Provider']
+    type: 'SET_WEB3_PROVIDER_FROM'
+    providerFrom?: StateType['providerFrom']
+    web3ProviderFrom?: StateType['web3ProviderFrom']
+    web3ProviderTo?: StateType['web3ProviderTo']
     address?: StateType['address']
     chainId?: StateType['chainId']
   }
@@ -22,23 +24,25 @@ export type ActionType =
     chainId?: StateType['chainId']
   }
   | {
-    type: 'RESET_WEB3_PROVIDER'
+    type: 'RESET_WEB3_PROVIDERS'
   }
 
 export const initialState: StateType = {
-  provider: null,
-  web3Provider: null,
+  providerFrom: null,
+  web3ProviderFrom: null,
+  web3ProviderTo: null,
   address: undefined,
   chainId: undefined,
 }
 
 const reducer = (state: StateType = initialState, action: ActionType): StateType => {
   switch (action.type) {
-    case 'SET_WEB3_PROVIDER':
+    case 'SET_WEB3_PROVIDER_FROM':
       return {
         ...state,
-        provider: action.provider,
-        web3Provider: action.web3Provider,
+        providerFrom: action.providerFrom,
+        web3ProviderFrom: action.web3ProviderFrom,
+        web3ProviderTo: action.web3ProviderTo,
         address: action.address,
         chainId: action.chainId,
       }
@@ -52,7 +56,7 @@ const reducer = (state: StateType = initialState, action: ActionType): StateType
         ...state,
         chainId: action.chainId,
       }
-    case 'RESET_WEB3_PROVIDER':
+    case 'RESET_WEB3_PROVIDERS':
       return initialState
     default:
       throw new Error()

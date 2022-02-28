@@ -3,15 +3,18 @@ import Stack from '@mui/material/Stack'
 
 import WalletSelect from './WalletSelect'
 import TransferControls from './TransferControls'
-import { IChainData } from '../lib/types'
+import { IChainData } from '../types'
+import { useState } from 'react'
 
-const WalletsConnector = ({ chainData, supportedChains }: { chainData: IChainData, supportedChains: IChainData[]}): JSX.Element => {
+const WalletsConnector = ({ address, chainData, contracts, supportedChains }: { address: string, chainData: { from: IChainData, to: IChainData }, contracts: any, supportedChains: IChainData[]}): JSX.Element => {
+  const [balanceFrom, setBalanceFrom] = useState('')
+  
   return (
     <Paper elevation={0} sx={{ p: 1.5, backgroundColor: 'rgba(18,18,18,0.9)' }}>
       <Stack spacing={2}>
-        <WalletSelect chainData={chainData} supportedChains={supportedChains} />
-        <TransferControls/>
-        <WalletSelect chainData={chainData} supportedChains={supportedChains} />
+        <WalletSelect address={address} chainData={chainData.from} supportedChains={supportedChains} contracts={contracts.from} onBalanceUpdated={setBalanceFrom} />
+        <TransferControls chainData={chainData.from} balance={balanceFrom}/>
+        <WalletSelect address={address} chainData={chainData.to} supportedChains={supportedChains} contracts={contracts.to} />
       </Stack>
     </Paper>
   )

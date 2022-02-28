@@ -7,7 +7,12 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
 contract XFW7Token is ERC20, ERC20Burnable, Ownable {
-    constructor() ERC20("XFW7Token", "XFW7") {}
+    // constructor() ERC20("XFW7Token", "XFW7") {}
+
+    // For testing purposes
+    constructor(uint256 initialSupply) ERC20("XFW7Token", "XFW7") {
+        _mint(msg.sender, initialSupply);
+    }
 
     function mint(address recipient, uint256 amount) external onlyOwner {
         _mint(recipient, amount);

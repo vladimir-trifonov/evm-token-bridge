@@ -1,4 +1,4 @@
-import { ellipseAddress } from '../lib/utilities'
+import { ellipseAddress } from '../helpers/utilities'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import { emphasize, styled } from '@mui/material/styles'
 import Chip from '@mui/material/Chip'

@@ -24,8 +24,8 @@ async function main() {
   ]);
 
   const [fw7Token, xfw7Token] = await Promise.all([
-    FW7Token.deploy(1000000000),
-    XFW7Token.deploy(),
+    FW7Token.deploy(1000),
+    XFW7Token.deploy(500),
   ]);
 
   await Promise.all([fw7Token.deployed(), xfw7Token.deployed()]);
