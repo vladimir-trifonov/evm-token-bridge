@@ -8,10 +8,10 @@ export function isAddress(value: string) {
   }
 }
 
-export function getContract(address: string, ABI: any, provider: any) {
+export function getContract(address: string, ABI: any, providerOrSigner: any) {
   if (!isAddress(address) || address === constants.AddressZero) {
     throw Error(`Invalid 'address' parameter '${address}'.`);
   }
 
-  return new Contract(address, ABI, provider);
+  return new Contract(address, ABI, providerOrSigner);
 }

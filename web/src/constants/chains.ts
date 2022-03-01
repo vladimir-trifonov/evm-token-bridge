@@ -1,7 +1,6 @@
 import { IChainData } from '../types'
 
-
-export const baseChainsIds = [1, 3, 1337]
+export const baseChainsIds = [1, 3, 31337]
 export const sideChainsIds = [56, 97, 1338]
 
 const supportedChains: IChainData[] = [
@@ -74,8 +73,8 @@ const supportedChains: IChainData[] = [
     short_name: 'hhl',
     chain: 'ETH',
     network: 'mainchain',
-    chain_id: 1337,
-    network_id: 1337,
+    chain_id: 31337,
+    network_id: 31337,
     rpc_url: 'http://localhost:8545/',
     native_currency: {
       symbol: 'ETH',

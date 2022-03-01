@@ -19,7 +19,7 @@ export const Home = (): JSX.Element => {
     { connect, disconnect }, 
     { chainDataFrom, chainDataTo, web3ProviderFrom, address, supportedChains }
   ] = useWeb3Connect(state, dispatch)
-  const [from, to] = useWeb3Contracts(state)
+  const [{onDeposit}, { from, to }] = useWeb3Contracts(state)
 
   return (
     <>
@@ -52,6 +52,7 @@ export const Home = (): JSX.Element => {
                 chainData={{ from: chainDataFrom, to: chainDataTo }} 
                 contracts={{ from, to }}
                 supportedChains={supportedChains}
+                onDeposit={onDeposit}
               />
             </Grid>
           </Grid>

@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./Bridge.sol";
+import "hardhat/console.sol";
 
 contract FW7Bridge is Bridge {
     uint256 public locked;
@@ -10,9 +11,10 @@ contract FW7Bridge is Bridge {
     constructor(address _token, address _gateway) Bridge(_token, _gateway) {}
 
     function depositTokens(uint256 _amount) public returns (bool) {
+      require(_amount > 0, "Insufficient tokens");
       locked += _amount;
       require(locked >= _amount, "Total locked overflow");
-      require(token.transfer(address(this), _amount), "Failed to transfer");
+      require(token.transferFrom(msg.sender, address(this), _amount), "Failed to transfer");
       emit DepositTokens(msg.sender, _amount);
       return true;
     }

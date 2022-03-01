@@ -12,7 +12,7 @@ const sideChainTokenAddress = process.env.REACT_APP_XFW7_TOKEN_ADDRESS as string
 const sideChainBridgeAddress = process.env.REACT_APP_XFW7_BRIDGE_ADDRESS as string
 
 const useWeb3Contracts = (state: any): any => {
-  const { web3ProviderFrom, web3ProviderTo, chainId } = state
+  const { web3ProviderFrom, web3ProviderTo, chainId, address } = state
 
   const [tokenFromContract, setTokenFromContract] = useState<null | any>(null)
   const [bridgeFromContract, setBridgeFromContract] = useState<null | any>(null)
@@ -24,8 +24,8 @@ const useWeb3Contracts = (state: any): any => {
     const baseChainProvider = isProviderFromBaseChain ? web3ProviderFrom : web3ProviderTo
     const sideChainProvider = isProviderFromBaseChain ? web3ProviderTo : web3ProviderFrom
 
-    const fw7TokenContract = getContract(baseChainTokenAddress as string, FW7Token.abi, baseChainProvider)
-    const fw7BridgeContract = getContract(baseChainBridgeAddress as string, FW7Bridge.abi, baseChainProvider)
+    const fw7TokenContract = getContract(baseChainTokenAddress as string, FW7Token.abi, baseChainProvider.getSigner())
+    const fw7BridgeContract = getContract(baseChainBridgeAddress as string, FW7Bridge.abi, baseChainProvider.getSigner())
     const xFw7TokenContract = getContract(sideChainTokenAddress as string, XFW7Token.abi, sideChainProvider)
     const xFfw7BridgeContract = getContract(sideChainBridgeAddress as string, XFW7Bridge.abi, sideChainProvider)
 
@@ -49,8 +49,15 @@ const useWeb3Contracts = (state: any): any => {
       clearContracts()
     }
   }, [chainId, getContracts, web3ProviderFrom, web3ProviderTo])
+
+  const onDeposit = async (amount: string) => {
+    const dataArr = [parseFloat(amount)];
+		await tokenFromContract.approve(baseChainBridgeAddress, amount);
+		const transaction = await bridgeFromContract.depositTokens(dataArr);
+    await transaction.wait();
+  }
   
-  return [{ token: tokenFromContract, bridge: bridgeFromContract }, { token: tokenToContract, bridge: bridgeToContract}]
+  return [{ onDeposit }, { from: { token: tokenFromContract, bridge: bridgeFromContract }, to: { token: tokenToContract, bridge: bridgeToContract}}]
 }
 
 export default useWeb3Contracts

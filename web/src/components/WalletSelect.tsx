@@ -12,7 +12,6 @@ const WalletSelect = ({ address, chainData, contracts, onBalanceUpdated, support
   const [balance, setBalance] = useState('0')
   const [tokenSymbol, setTokenSymbol] = useState('')
 
-
   useEffect(() => {
     if (chainData?.chain_id) {
       setTokenSymbol(getTokenSymbol(chainData.chain_id))
