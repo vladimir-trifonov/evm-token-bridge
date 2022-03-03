@@ -16,31 +16,18 @@ async function main() {
   const [deployer] = await ethers.getSigners();
   console.log("Deploying contracts with the account: " + deployer.address);
 
-  const [FW7Token, XFW7Token, FW7Bridge, XFW7Bridge] = await Promise.all([
+  const [FW7Token, FW7Bridge] = await Promise.all([
     ethers.getContractFactory("FW7Token"),
-    ethers.getContractFactory("XFW7Token"),
     ethers.getContractFactory("FW7Bridge"),
-    ethers.getContractFactory("XFW7Bridge"),
   ]);
 
-  const [fw7Token, xfw7Token] = await Promise.all([
-    FW7Token.deploy(1000),
-    XFW7Token.deploy(500),
-  ]);
-
-  await Promise.all([fw7Token.deployed(), xfw7Token.deployed()]);
-
-  const [fw7Bridge, xfw7Bridge] = await Promise.all([
-    FW7Bridge.deploy(fw7Token.address, deployer.address),
-    XFW7Bridge.deploy(xfw7Token.address, deployer.address),
-  ]);
-
-  await Promise.all([fw7Bridge.deployed(), xfw7Bridge.deployed()]);
+  const fw7Token = await FW7Token.deploy(1000);
+  await fw7Token.deployed();
+  const fw7Bridge = await FW7Bridge.deploy(fw7Token.address);
+  await fw7Bridge.deployed();
 
   console.log("FW7Token deployed to:", fw7Token.address);
-  console.log("XFW7Token deployed to:", xfw7Token.address);
   console.log("FW7Bridge deployed to:", fw7Bridge.address);
-  console.log("XFW7Bridge deployed to:", xfw7Bridge.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

@@ -19,22 +19,20 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface BridgeInterface extends utils.Interface {
   contractName: "Bridge";
   functions: {
-    "bridget(bytes)": FunctionFragment;
-    "gateway()": FunctionFragment;
-    "gatewayUpdate(address)": FunctionFragment;
+    "bridged(address)": FunctionFragment;
     "owner()": FunctionFragment;
+    "processedHashes(bytes32)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "token()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "bridget", values: [BytesLike]): string;
-  encodeFunctionData(functionFragment: "gateway", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "gatewayUpdate",
-    values: [string]
-  ): string;
+  encodeFunctionData(functionFragment: "bridged", values: [string]): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "processedHashes",
+    values: [BytesLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
@@ -45,13 +43,12 @@ export interface BridgeInterface extends utils.Interface {
     values: [string]
   ): string;
 
-  decodeFunctionResult(functionFragment: "bridget", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "gateway", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "bridged", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "gatewayUpdate",
+    functionFragment: "processedHashes",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -67,7 +64,7 @@ export interface BridgeInterface extends utils.Interface {
     "DepositTokens(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "ReturnTokens(address,uint256)": EventFragment;
-    "TokensBridged(address,bytes32,uint256)": EventFragment;
+    "TokensBridged(address,uint256,bytes32)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ClaimTokens"): EventFragment;
@@ -86,7 +83,7 @@ export type ClaimTokensEventFilter = TypedEventFilter<ClaimTokensEvent>;
 
 export type DepositTokensEvent = TypedEvent<
   [string, BigNumber],
-  { sender: string; _amount: BigNumber }
+  { receiver: string; _amount: BigNumber }
 >;
 
 export type DepositTokensEventFilter = TypedEventFilter<DepositTokensEvent>;
@@ -107,8 +104,8 @@ export type ReturnTokensEvent = TypedEvent<
 export type ReturnTokensEventFilter = TypedEventFilter<ReturnTokensEvent>;
 
 export type TokensBridgedEvent = TypedEvent<
-  [string, string, BigNumber],
-  { sender: string; mainDepositHash: string; _amount: BigNumber }
+  [string, BigNumber, string],
+  { _receiver: string; _amount: BigNumber; _otherChainTransactionHash: string }
 >;
 
 export type TokensBridgedEventFilter = TypedEventFilter<TokensBridgedEvent>;
@@ -141,16 +138,14 @@ export interface Bridge extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    bridget(arg0: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    gateway(overrides?: CallOverrides): Promise<[string]>;
-
-    gatewayUpdate(
-      _gateway: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    bridged(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
+
+    processedHashes(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -164,16 +159,11 @@ export interface Bridge extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  bridget(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-  gateway(overrides?: CallOverrides): Promise<string>;
-
-  gatewayUpdate(
-    _gateway: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  bridged(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   owner(overrides?: CallOverrides): Promise<string>;
+
+  processedHashes(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -187,13 +177,14 @@ export interface Bridge extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    bridget(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-    gateway(overrides?: CallOverrides): Promise<string>;
-
-    gatewayUpdate(_gateway: string, overrides?: CallOverrides): Promise<void>;
+    bridged(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
+
+    processedHashes(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
@@ -213,11 +204,11 @@ export interface Bridge extends BaseContract {
     ClaimTokens(sender?: string | null, _amount?: null): ClaimTokensEventFilter;
 
     "DepositTokens(address,uint256)"(
-      sender?: string | null,
+      receiver?: string | null,
       _amount?: null
     ): DepositTokensEventFilter;
     DepositTokens(
-      sender?: string | null,
+      receiver?: string | null,
       _amount?: null
     ): DepositTokensEventFilter;
 
@@ -239,29 +230,27 @@ export interface Bridge extends BaseContract {
       _amount?: null
     ): ReturnTokensEventFilter;
 
-    "TokensBridged(address,bytes32,uint256)"(
-      sender?: string | null,
-      mainDepositHash?: BytesLike | null,
-      _amount?: null
+    "TokensBridged(address,uint256,bytes32)"(
+      _receiver?: string | null,
+      _amount?: null,
+      _otherChainTransactionHash?: null
     ): TokensBridgedEventFilter;
     TokensBridged(
-      sender?: string | null,
-      mainDepositHash?: BytesLike | null,
-      _amount?: null
+      _receiver?: string | null,
+      _amount?: null,
+      _otherChainTransactionHash?: null
     ): TokensBridgedEventFilter;
   };
 
   estimateGas: {
-    bridget(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-
-    gateway(overrides?: CallOverrides): Promise<BigNumber>;
-
-    gatewayUpdate(
-      _gateway: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    bridged(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    processedHashes(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -276,19 +265,17 @@ export interface Bridge extends BaseContract {
   };
 
   populateTransaction: {
-    bridget(
-      arg0: BytesLike,
+    bridged(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    gateway(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    gatewayUpdate(
-      _gateway: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    processedHashes(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }

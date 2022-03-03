@@ -6,28 +6,16 @@ import "./IToken.sol";
 
 abstract contract Bridge is Ownable {
     IToken public token;
-    address public gateway;
-    mapping(bytes => uint256) public bridget;
+    mapping(address => uint256) public bridged;
+    mapping(bytes32 => bool) public processedHashes;
 
-    event DepositTokens(address indexed sender, uint256 _amount);
+    event DepositTokens(address indexed receiver, uint256 _amount);
     event ReturnTokens(address indexed sender, uint _amount);
     event ClaimTokens(address indexed sender, uint256 _amount);
+    event TokensBridged(address indexed _receiver, uint _amount, bytes32 _otherChainTransactionHash);
 
-    event TokensBridged(address indexed sender, bytes32 indexed mainDepositHash, uint _amount);
-
-    modifier onlyGateway {
-      require(msg.sender == gateway, "Only bridge can execute");
-      _;
-    }
-
-    constructor(address _token, address _gateway) {
+    constructor(address _token) {
       token = IToken(_token);
-      gateway = _gateway;
-    }
-
-    function gatewayUpdate(address _gateway) external onlyOwner {
-      require(_gateway != address(0), "Don't burn the bridge");
-      gateway = _gateway;
     }
 
     fallback() external payable {

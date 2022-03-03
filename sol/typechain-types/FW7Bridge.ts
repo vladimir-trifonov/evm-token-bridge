@@ -20,43 +20,41 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface FW7BridgeInterface extends utils.Interface {
   contractName: "FW7Bridge";
   functions: {
-    "bridget(bytes)": FunctionFragment;
+    "bridged(address)": FunctionFragment;
     "claimTokens()": FunctionFragment;
-    "depositTokens(uint256)": FunctionFragment;
-    "gateway()": FunctionFragment;
-    "gatewayUpdate(address)": FunctionFragment;
+    "depositTokens(address,uint256)": FunctionFragment;
     "locked()": FunctionFragment;
     "owner()": FunctionFragment;
+    "processedHashes(bytes32)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "returnTokens()": FunctionFragment;
+    "returnTokens(address)": FunctionFragment;
     "token()": FunctionFragment;
     "tokensBridged(address,uint256,bytes32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "bridget", values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: "bridged", values: [string]): string;
   encodeFunctionData(
     functionFragment: "claimTokens",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "depositTokens",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "gateway", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "gatewayUpdate",
-    values: [string]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "locked", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "processedHashes",
+    values: [BytesLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "returnTokens",
-    values?: undefined
+    values: [string]
   ): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
   encodeFunctionData(
@@ -68,7 +66,7 @@ export interface FW7BridgeInterface extends utils.Interface {
     values: [string]
   ): string;
 
-  decodeFunctionResult(functionFragment: "bridget", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "bridged", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "claimTokens",
     data: BytesLike
@@ -77,13 +75,12 @@ export interface FW7BridgeInterface extends utils.Interface {
     functionFragment: "depositTokens",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "gateway", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "gatewayUpdate",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "locked", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "processedHashes",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -107,7 +104,7 @@ export interface FW7BridgeInterface extends utils.Interface {
     "DepositTokens(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "ReturnTokens(address,uint256)": EventFragment;
-    "TokensBridged(address,bytes32,uint256)": EventFragment;
+    "TokensBridged(address,uint256,bytes32)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ClaimTokens"): EventFragment;
@@ -126,7 +123,7 @@ export type ClaimTokensEventFilter = TypedEventFilter<ClaimTokensEvent>;
 
 export type DepositTokensEvent = TypedEvent<
   [string, BigNumber],
-  { sender: string; _amount: BigNumber }
+  { receiver: string; _amount: BigNumber }
 >;
 
 export type DepositTokensEventFilter = TypedEventFilter<DepositTokensEvent>;
@@ -147,8 +144,8 @@ export type ReturnTokensEvent = TypedEvent<
 export type ReturnTokensEventFilter = TypedEventFilter<ReturnTokensEvent>;
 
 export type TokensBridgedEvent = TypedEvent<
-  [string, string, BigNumber],
-  { sender: string; mainDepositHash: string; _amount: BigNumber }
+  [string, BigNumber, string],
+  { _receiver: string; _amount: BigNumber; _otherChainTransactionHash: string }
 >;
 
 export type TokensBridgedEventFilter = TypedEventFilter<TokensBridgedEvent>;
@@ -181,21 +178,15 @@ export interface FW7Bridge extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    bridget(arg0: BytesLike, overrides?: CallOverrides): Promise<[BigNumber]>;
+    bridged(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     claimTokens(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     depositTokens(
+      _receiver: string,
       _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    gateway(overrides?: CallOverrides): Promise<[string]>;
-
-    gatewayUpdate(
-      _gateway: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -203,20 +194,26 @@ export interface FW7Bridge extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
+    processedHashes(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     returnTokens(
+      _receiver: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     token(overrides?: CallOverrides): Promise<[string]>;
 
     tokensBridged(
-      _requester: string,
+      _receiver: string,
       _amount: BigNumberish,
-      _sideDepositHash: BytesLike,
+      _otherChainTransactionHash: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -226,21 +223,15 @@ export interface FW7Bridge extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  bridget(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+  bridged(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   claimTokens(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   depositTokens(
+    _receiver: string,
     _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  gateway(overrides?: CallOverrides): Promise<string>;
-
-  gatewayUpdate(
-    _gateway: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -248,20 +239,23 @@ export interface FW7Bridge extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
+  processedHashes(arg0: BytesLike, overrides?: CallOverrides): Promise<boolean>;
+
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   returnTokens(
+    _receiver: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   token(overrides?: CallOverrides): Promise<string>;
 
   tokensBridged(
-    _requester: string,
+    _receiver: string,
     _amount: BigNumberish,
-    _sideDepositHash: BytesLike,
+    _otherChainTransactionHash: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -271,35 +265,37 @@ export interface FW7Bridge extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    bridget(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+    bridged(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    claimTokens(overrides?: CallOverrides): Promise<boolean>;
+    claimTokens(overrides?: CallOverrides): Promise<void>;
 
     depositTokens(
+      _receiver: string,
       _amount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    gateway(overrides?: CallOverrides): Promise<string>;
-
-    gatewayUpdate(_gateway: string, overrides?: CallOverrides): Promise<void>;
+    ): Promise<void>;
 
     locked(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
+    processedHashes(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
-    returnTokens(overrides?: CallOverrides): Promise<boolean>;
+    returnTokens(_receiver: string, overrides?: CallOverrides): Promise<void>;
 
     token(overrides?: CallOverrides): Promise<string>;
 
     tokensBridged(
-      _requester: string,
+      _receiver: string,
       _amount: BigNumberish,
-      _sideDepositHash: BytesLike,
+      _otherChainTransactionHash: BytesLike,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     transferOwnership(
       newOwner: string,
@@ -315,11 +311,11 @@ export interface FW7Bridge extends BaseContract {
     ClaimTokens(sender?: string | null, _amount?: null): ClaimTokensEventFilter;
 
     "DepositTokens(address,uint256)"(
-      sender?: string | null,
+      receiver?: string | null,
       _amount?: null
     ): DepositTokensEventFilter;
     DepositTokens(
-      sender?: string | null,
+      receiver?: string | null,
       _amount?: null
     ): DepositTokensEventFilter;
 
@@ -341,34 +337,28 @@ export interface FW7Bridge extends BaseContract {
       _amount?: null
     ): ReturnTokensEventFilter;
 
-    "TokensBridged(address,bytes32,uint256)"(
-      sender?: string | null,
-      mainDepositHash?: BytesLike | null,
-      _amount?: null
+    "TokensBridged(address,uint256,bytes32)"(
+      _receiver?: string | null,
+      _amount?: null,
+      _otherChainTransactionHash?: null
     ): TokensBridgedEventFilter;
     TokensBridged(
-      sender?: string | null,
-      mainDepositHash?: BytesLike | null,
-      _amount?: null
+      _receiver?: string | null,
+      _amount?: null,
+      _otherChainTransactionHash?: null
     ): TokensBridgedEventFilter;
   };
 
   estimateGas: {
-    bridget(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+    bridged(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     claimTokens(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     depositTokens(
+      _receiver: string,
       _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    gateway(overrides?: CallOverrides): Promise<BigNumber>;
-
-    gatewayUpdate(
-      _gateway: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -376,20 +366,26 @@ export interface FW7Bridge extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
+    processedHashes(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     returnTokens(
+      _receiver: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     token(overrides?: CallOverrides): Promise<BigNumber>;
 
     tokensBridged(
-      _requester: string,
+      _receiver: string,
       _amount: BigNumberish,
-      _sideDepositHash: BytesLike,
+      _otherChainTransactionHash: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -400,8 +396,8 @@ export interface FW7Bridge extends BaseContract {
   };
 
   populateTransaction: {
-    bridget(
-      arg0: BytesLike,
+    bridged(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -410,14 +406,8 @@ export interface FW7Bridge extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     depositTokens(
+      _receiver: string,
       _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    gateway(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    gatewayUpdate(
-      _gateway: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -425,20 +415,26 @@ export interface FW7Bridge extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    processedHashes(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     returnTokens(
+      _receiver: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     tokensBridged(
-      _requester: string,
+      _receiver: string,
       _amount: BigNumberish,
-      _sideDepositHash: BytesLike,
+      _otherChainTransactionHash: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

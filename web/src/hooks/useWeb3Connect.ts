@@ -34,20 +34,26 @@ const useWeb3Connect = (state: any, dispatch: any): any => {
     
     const web3ProviderFrom = new providers.Web3Provider(providerFrom)
   
-    const signer = web3ProviderFrom.getSigner()
-    const address = await signer.getAddress()
+    const fromSigner = web3ProviderFrom.getSigner()
+    const fromAddress = await fromSigner.getAddress()
     const network = await web3ProviderFrom.getNetwork()
 
     const providerToChainData = getProviderToChainData(network)
     setProviderToChainData(providerToChainData)
     const web3ProviderTo = new providers.JsonRpcProvider(providerToChainData!.rpc_url)
+    const toSigner = web3ProviderTo.getSigner()
+    const toAddress = await toSigner.getAddress()
+
+    console.log("From address", fromAddress)
+    console.log("To address", toAddress)
 
     dispatch({
       type: 'SET_WEB3_PROVIDER_FROM',
       providerFrom,
       web3ProviderFrom,
       web3ProviderTo,
-      address,
+      toAddress: toAddress,
+      fromAddress,
       chainId: network.chainId
     })
   }, [dispatch])
@@ -77,7 +83,7 @@ const useWeb3Connect = (state: any, dispatch: any): any => {
         console.log('accountsChanged', accounts)
         dispatch({
           type: 'SET_ADDRESS',
-          address: accounts[0],
+          fromAddress: accounts[0],
         })
       }
 

@@ -7,14 +7,21 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
 contract XFW7Token is ERC20, ERC20Burnable, Ownable {
-    // constructor() ERC20("XFW7Token", "XFW7") {}
+    address public gateway;
+    
+    constructor() ERC20("XFW7Token", "XFW7") {}
 
-    // For testing purposes
-    constructor(uint256 initialSupply) ERC20("XFW7Token", "XFW7") {
-        _mint(msg.sender, initialSupply);
+    modifier onlyGateway {
+      require(msg.sender == gateway, "Only bridge can execute");
+      _;
     }
 
-    function mint(address recipient, uint256 amount) external onlyOwner {
+    function gatewayUpdate(address _gateway) external onlyOwner {
+      require(_gateway != address(0), "Don't abandon the bridge");
+      gateway = _gateway;
+    }
+
+    function mintTo(address recipient, uint256 amount) external onlyGateway {
         _mint(recipient, amount);
     }
 }

@@ -17,9 +17,9 @@ export const Home = (): JSX.Element => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const [
     { connect, disconnect }, 
-    { chainDataFrom, chainDataTo, web3ProviderFrom, address, supportedChains }
+    { chainDataFrom, chainDataTo, web3ProviderFrom, fromAddress, toAddress, supportedChains }
   ] = useWeb3Connect(state, dispatch)
-  const [{onDeposit}, { from, to }] = useWeb3Contracts(state)
+  const [{ onDeposit, onClaim, onReturn }, { from, to }] = useWeb3Contracts(state)
 
   return (
     <>
@@ -34,7 +34,7 @@ export const Home = (): JSX.Element => {
               Bridge
               </Typography>
             </Box>
-            <NetworkInfo chainData={chainDataFrom} address={address}/>
+            <NetworkInfo chainData={chainDataFrom} address={fromAddress}/>
             {web3ProviderFrom ? (
                 <Button color="inherit" onClick={disconnect}>Disconnect</Button>
             ) : (
@@ -48,11 +48,14 @@ export const Home = (): JSX.Element => {
           <Grid container sx={{ height: '100%', justifyContent: 'center', alignItems: 'center' }}>
             <Grid item xs={4}>
               <Bridge 
-                address={address} 
+                fromAddress={fromAddress} 
+                toAddress={toAddress} 
                 chainData={{ from: chainDataFrom, to: chainDataTo }} 
                 contracts={{ from, to }}
                 supportedChains={supportedChains}
                 onDeposit={onDeposit}
+                onClaim={onClaim}
+                onReturn={onReturn}
               />
             </Grid>
           </Grid>

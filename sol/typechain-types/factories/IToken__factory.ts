@@ -127,12 +127,17 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
         internalType: "uint256",
         name: "amount",
         type: "uint256",
       },
     ],
-    name: "burn",
+    name: "burnFrom",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -150,7 +155,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "mint",
+    name: "mintTo",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

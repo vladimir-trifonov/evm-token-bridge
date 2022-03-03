@@ -2,7 +2,8 @@ type StateType = {
   providerFrom?: any
   web3ProviderFrom?: any
   web3ProviderTo?: any
-  address?: string
+  fromAddress?: string
+  toAddress?: string
   chainId?: number
 }
 
@@ -12,12 +13,14 @@ export type ActionType =
     providerFrom?: StateType['providerFrom']
     web3ProviderFrom?: StateType['web3ProviderFrom']
     web3ProviderTo?: StateType['web3ProviderTo']
-    address?: StateType['address']
+    fromAddress?: StateType['fromAddress']
+    toAddress?: StateType['toAddress']
     chainId?: StateType['chainId']
   }
   | {
     type: 'SET_ADDRESS'
-    address?: StateType['address']
+    fromAddress?: StateType['fromAddress']
+    toAddress?: StateType['toAddress']
   }
   | {
     type: 'SET_CHAIN_ID'
@@ -31,7 +34,8 @@ export const initialState: StateType = {
   providerFrom: null,
   web3ProviderFrom: null,
   web3ProviderTo: null,
-  address: undefined,
+  fromAddress: undefined,
+  toAddress: undefined,
   chainId: undefined,
 }
 
@@ -43,13 +47,14 @@ const reducer = (state: StateType = initialState, action: ActionType): StateType
         providerFrom: action.providerFrom,
         web3ProviderFrom: action.web3ProviderFrom,
         web3ProviderTo: action.web3ProviderTo,
-        address: action.address,
+        fromAddress: action.fromAddress,
+        toAddress: action.toAddress,
         chainId: action.chainId,
       }
     case 'SET_ADDRESS':
       return {
         ...state,
-        address: action.address,
+        fromAddress: action.fromAddress,
       }
     case 'SET_CHAIN_ID':
       return {

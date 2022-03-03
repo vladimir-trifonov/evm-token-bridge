@@ -32,7 +32,7 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "sender",
+        name: "receiver",
         type: "address",
       },
       {
@@ -89,20 +89,20 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "sender",
+        name: "_receiver",
         type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "bytes32",
-        name: "mainDepositHash",
-        type: "bytes32",
       },
       {
         indexed: false,
         internalType: "uint256",
         name: "_amount",
         type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "_otherChainTransactionHash",
+        type: "bytes32",
       },
     ],
     name: "TokensBridged",
@@ -115,12 +115,12 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "bytes",
+        internalType: "address",
         name: "",
-        type: "bytes",
+        type: "address",
       },
     ],
-    name: "bridget",
+    name: "bridged",
     outputs: [
       {
         internalType: "uint256",
@@ -133,7 +133,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "gateway",
+    name: "owner",
     outputs: [
       {
         internalType: "address",
@@ -147,24 +147,17 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_gateway",
-        type: "address",
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
       },
     ],
-    name: "gatewayUpdate",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "owner",
+    name: "processedHashes",
     outputs: [
       {
-        internalType: "address",
+        internalType: "bool",
         name: "",
-        type: "address",
+        type: "bool",
       },
     ],
     stateMutability: "view",
