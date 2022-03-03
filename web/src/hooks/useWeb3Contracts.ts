@@ -5,6 +5,7 @@ import FW7Token from "../constants/abis/FW7Token.json"
 import FW7Bridge from "../constants/abis/FW7Bridge.json"
 import XFW7Token from "../constants/abis/XFW7Token.json"
 import XFW7Bridge from "../constants/abis/XFW7Bridge.json"
+import { utils } from "ethers"
 
 const baseChainTokenAddress = process.env.REACT_APP_FW7_TOKEN_ADDRESS as string
 const baseChainBridgeAddress = process.env.REACT_APP_FW7_BRIDGE_ADDRESS as string
@@ -32,8 +33,8 @@ const useWeb3Contracts = (state: any): any => {
     const fw7TokenContract = getContract(baseChainTokenAddress as string, FW7Token.abi, isProviderFromBaseChain ? baseChainProvider.getSigner() : baseChainProvider)
     const fw7BridgeContract = getContract(baseChainBridgeAddress as string, FW7Bridge.abi, isProviderFromBaseChain ? baseChainProvider.getSigner() : baseChainProvider)
     const xFw7TokenContract = getContract(sideChainTokenAddress as string, XFW7Token.abi, isProviderFromBaseChain ? sideChainProvider : sideChainProvider.getSigner())
-    const xFfw7BridgeContract = getContract(sideChainBridgeAddress as string, XFW7Bridge.abi, isProviderFromBaseChain ? sideChainProvider: sideChainProvider.getSigner())
-    
+    const xFfw7BridgeContract = getContract(sideChainBridgeAddress as string, XFW7Bridge.abi, isProviderFromBaseChain ? sideChainProvider : sideChainProvider.getSigner())
+
     setTokenFromContract(isProviderFromBaseChain ? fw7TokenContract : xFw7TokenContract)
     setBridgeFromContract(isProviderFromBaseChain ? fw7BridgeContract : xFfw7BridgeContract)
     setTokenToContract(isProviderFromBaseChain ? xFw7TokenContract : fw7TokenContract)
@@ -55,26 +56,24 @@ const useWeb3Contracts = (state: any): any => {
     }
   }, [chainId, getContracts, web3ProviderFrom, web3ProviderTo])
 
-  
-  
   const getToBalance = useCallback(async () => {
     const balance = await tokenToContract?.balanceOf(toAddress)
-    setToBalance(balance.toString())
+    setToBalance(utils.formatEther(balance.toString()).toString())
   }, [toAddress, tokenToContract])
 
   const getToBridged = useCallback(async () => {
     const bridged = await bridgeToContract?.bridged(toAddress)
-    setToBridged(bridged.toString())
+    setToBridged(utils.formatEther(bridged.toString()).toString())
   }, [bridgeToContract, toAddress])
 
   const getFromBalance = useCallback(async () => {
     const balance = await tokenFromContract?.balanceOf(fromAddress)
-    setFromBalance(balance.toString())
+    setFromBalance(utils.formatEther(balance.toString()).toString())
   }, [fromAddress, tokenFromContract])
 
   const getFromBridged = useCallback(async () => {
     const bridged = await bridgeFromContract?.bridged(fromAddress)
-    setFromBridged(bridged.toString())
+    setFromBridged(utils.formatEther(bridged.toString()).toString())
   }, [bridgeFromContract, fromAddress])
 
   useEffect(() => {
@@ -92,33 +91,32 @@ const useWeb3Contracts = (state: any): any => {
   }, [getToBalance, getToBridged, toAddress, tokenToContract])
 
   const onDeposit = async (amount: string) => {
-    await tokenFromContract.approve(isBaseChain(chainId) ? baseChainBridgeAddress : sideChainBridgeAddress, amount);
-		const transaction = await bridgeFromContract.depositTokens(toAddress, parseFloat(amount));
+    await tokenFromContract.approve(isBaseChain(chainId) ? baseChainBridgeAddress : sideChainBridgeAddress, utils.parseEther(amount));
+    const transaction = await bridgeFromContract
+      .depositTokens(toAddress, utils.parseEther(amount), isBaseChain(chainId) ? { value: utils.parseEther(process.env.REACT_APP_TRANSACTION_FEE as string) } : {});
     await transaction.wait();
   }
 
   const onClaim = async (type: string) => {
-		const transaction = await (type === "from" ? bridgeFromContract : bridgeToContract).claimTokens();
+    const transaction = await (type === "from" ? bridgeFromContract : bridgeToContract)
+      .claimTokens(isBaseChain(chainId) ? { value: utils.parseEther(process.env.REACT_APP_TRANSACTION_FEE as string) } : {});
     await transaction.wait();
   }
 
   const onReturn = async (type: string) => {
-		const transaction = await (type === "from" ? bridgeFromContract : bridgeToContract).returnTokens(toAddress);
+    const transaction = await (type === "from" ? bridgeFromContract : bridgeToContract)
+      .returnTokens(toAddress, isBaseChain(chainId) ? { value: utils.parseEther(process.env.REACT_APP_TRANSACTION_FEE as string) } : {});
     await transaction.wait();
   }
 
   useEffect(() => {
     if (bridgeFromContract?.on) {
-      const handleReturnTokens = () => {
-        getFromBridged()
-      }
-
       const bridgeReturnFromFilter = bridgeFromContract.filters.ReturnTokens(fromAddress);
-      bridgeFromContract.on(bridgeReturnFromFilter, handleReturnTokens)
+      bridgeFromContract.on(bridgeReturnFromFilter, getFromBridged)
 
       return () => {
         if (bridgeFromContract.off) {
-          bridgeFromContract.off(bridgeReturnFromFilter, handleReturnTokens)
+          bridgeFromContract.off(bridgeReturnFromFilter, getFromBridged)
         }
       }
     }
@@ -144,16 +142,12 @@ const useWeb3Contracts = (state: any): any => {
 
   useEffect(() => {
     if (bridgeFromContract?.on) {
-      const handleDepositTokens = () => {
-        getFromBalance()
-      }
-
       const bridgeDepositFromFilter = bridgeFromContract.filters.DepositTokens(fromAddress);
-      bridgeFromContract.on(bridgeDepositFromFilter, handleDepositTokens)
+      bridgeFromContract.on(bridgeDepositFromFilter, getFromBalance)
 
       return () => {
         if (bridgeFromContract.off) {
-          bridgeFromContract.off(bridgeDepositFromFilter, handleDepositTokens)
+          bridgeFromContract.off(bridgeDepositFromFilter, getFromBalance)
         }
       }
     }
@@ -161,22 +155,18 @@ const useWeb3Contracts = (state: any): any => {
 
   useEffect(() => {
     if (bridgeToContract?.on) {
-      const handleTokensBridged = () => {
-        getToBridged()
-      }
-
       const bridgeBridgedToFilter = bridgeToContract.filters.TokensBridged(toAddress);
-      bridgeToContract.on(bridgeBridgedToFilter, handleTokensBridged)
+      bridgeToContract.on(bridgeBridgedToFilter, getToBridged)
 
       return () => {
         if (bridgeToContract.off) {
-          bridgeToContract.off(bridgeBridgedToFilter, handleTokensBridged)
+          bridgeToContract.off(bridgeBridgedToFilter, getToBridged)
         }
       }
     }
   }, [bridgeToContract, getToBridged, toAddress])
-  
-  return [{ onDeposit, onClaim, onReturn }, { from: { address: fromAddress, balance: fromBalance, bridged: fromBridged }, to: { address: toAddress, balance: toBalance, bridged: toBridged }}]
+
+  return [{ onDeposit, onClaim, onReturn }, { from: { address: fromAddress, balance: fromBalance, bridged: fromBridged }, to: { address: toAddress, balance: toBalance, bridged: toBridged } }]
 }
 
 export default useWeb3Contracts

@@ -10,9 +10,9 @@ const INFURA_ID = process.env.REACT_APP_INFURA_ID
 
 const providerOptions = {
   walletconnect: {
-    package: WalletConnectProvider, // required
+    package: WalletConnectProvider,
     options: {
-      infuraId: INFURA_ID, // required
+      infuraId: INFURA_ID,
     },
   }
 }
@@ -21,19 +21,19 @@ let web3Modal: any
 if (typeof window !== "undefined") {
   web3Modal = new Web3Modal({
     cacheProvider: true,
-    providerOptions, // required
+    providerOptions,
   })
 }
 
 const useWeb3Connect = (state: any, dispatch: any): any => {
   const { providerFrom, chainId } = state
   const [providerToChainData, setProviderToChainData] = useState<null | IChainData>(null)
-  
+
   const connect = useCallback(async function () {
     const providerFrom = await web3Modal.connect()
-    
+
     const web3ProviderFrom = new providers.Web3Provider(providerFrom)
-  
+
     const fromSigner = web3ProviderFrom.getSigner()
     const fromAddress = await fromSigner.getAddress()
     const network = await web3ProviderFrom.getNetwork()
@@ -100,7 +100,6 @@ const useWeb3Connect = (state: any, dispatch: any): any => {
       providerFrom.on("chainChanged", handleChainChanged)
       providerFrom.on("disconnect", handleDisconnect)
 
-      // Subscription Cleanup
       return () => {
         if (providerFrom.removeListener) {
           providerFrom.removeListener("accountsChanged", handleAccountsChanged)
@@ -111,12 +110,21 @@ const useWeb3Connect = (state: any, dispatch: any): any => {
     }
   }, [providerFrom, disconnect, dispatch])
 
-
   const chainDataFrom = getChainData(chainId)
   const chainDataTo = providerToChainData
   const supportedChains = getSupportedChains(chainId)
 
-  return [{ connect, disconnect }, { chainDataFrom, chainDataTo, supportedChains, ...state }]
+  const onNetworkChange = async ({ target: { value: chainId }}: { target: any }) => {
+    if (window.ethereum) {
+      try {
+        await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: `0x${Number(chainId).toString(16)}` }] });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
+  return [{ connect, disconnect, onNetworkChange }, { chainDataFrom, chainDataTo, supportedChains, ...state }]
 }
 
 export default useWeb3Connect

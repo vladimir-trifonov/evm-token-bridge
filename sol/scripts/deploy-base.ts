@@ -21,7 +21,7 @@ async function main() {
     ethers.getContractFactory("FW7Bridge"),
   ]);
 
-  const fw7Token = await FW7Token.deploy(1000);
+  const fw7Token = await FW7Token.deploy();
   await fw7Token.deployed();
   const fw7Bridge = await FW7Bridge.deploy(fw7Token.address);
   await fw7Bridge.deployed();

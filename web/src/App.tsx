@@ -12,17 +12,19 @@ import NetworkInfo from "./components/NetworkInfo"
 import Bridge from "./components/Bridge"
 import reducer, { initialState } from "./reducer"
 import { useReducer } from "react"
+import { useErrorBoundary } from "use-error-boundary"
 
 export const Home = (): JSX.Element => {
+  const { ErrorBoundary } = useErrorBoundary()
   const [state, dispatch] = useReducer(reducer, initialState)
   const [
-    { connect, disconnect }, 
+    { connect, disconnect, onNetworkChange }, 
     { chainDataFrom, chainDataTo, web3ProviderFrom, fromAddress, toAddress, supportedChains }
   ] = useWeb3Connect(state, dispatch)
   const [{ onDeposit, onClaim, onReturn }, { from, to }] = useWeb3Contracts(state)
 
   return (
-    <>
+    <ErrorBoundary>
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static">
           <Toolbar>
@@ -46,8 +48,9 @@ export const Home = (): JSX.Element => {
       {web3ProviderFrom && (
         <Container fixed sx={{ height: "80vh" }}>
           <Grid container sx={{ height: "100%", justifyContent: "center", alignItems: "center" }}>
-            <Grid item xs={4}>
+            <Grid item xs={5}>
               <Bridge 
+                onNetworkChange={onNetworkChange}
                 fromAddress={fromAddress} 
                 toAddress={toAddress} 
                 chainData={{ from: chainDataFrom, to: chainDataTo }} 
@@ -61,7 +64,7 @@ export const Home = (): JSX.Element => {
           </Grid>
         </Container>
       )}
-    </>
+    </ErrorBoundary>
   )
 }
 

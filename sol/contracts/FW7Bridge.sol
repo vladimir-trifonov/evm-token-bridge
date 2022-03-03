@@ -6,10 +6,12 @@ import "./Bridge.sol";
 
 contract FW7Bridge is Bridge {
     uint256 public locked;
+    uint256 fee = 0.1 ether;
 
     constructor(address _token) Bridge(_token) {}
 
-    function depositTokens(address _receiver, uint256 _amount) public {
+    function depositTokens(address _receiver, uint256 _amount) public payable {
+      require(msg.value >= fee, "Insufficient fee");
       require(_amount > 0, "Insufficient tokens");
       locked += _amount;
       require(locked >= _amount, "Total locked overflow");
@@ -26,7 +28,8 @@ contract FW7Bridge is Bridge {
         emit TokensBridged(_receiver, _amount, _otherChainTransactionHash);
     }
 
-    function claimTokens() external {
+    function claimTokens() external payable {
+        require(msg.value >= fee, "Insufficient fee");
         uint256 amount = bridged[msg.sender];
         require(amount > 0, "Insufficient tokens");
         require(locked >= amount, "Insufficient locked tokens");
@@ -36,7 +39,8 @@ contract FW7Bridge is Bridge {
         emit ClaimTokens(msg.sender, amount);
     }
 
-    function returnTokens (address _receiver) external {
+    function returnTokens (address _receiver) external payable {
+        require(msg.value >= fee, "Insufficient fee");
         uint256 amount = bridged[msg.sender];
         require(amount > 0, "Insufficient bridged tokens");
         delete bridged[msg.sender];

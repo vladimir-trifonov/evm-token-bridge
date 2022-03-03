@@ -8,7 +8,7 @@ import { getTokenSymbol, ellipseAddress } from "../helpers/utilities"
 import TokenClaim from "./TokenClaim"
 import { useEffect, useState } from "react"
 
-const WalletSelect = ({ type, chainData, contracts, supportedChains, onClaim, onReturn }: { onReturn: any, type: string, onClaim: any, supportedChains: IChainData[], address: string, chainData: IChainData, contracts: any }): JSX.Element => {
+const WalletSelect = ({ type, chainData, contracts, onNetworkChange, supportedChains, onClaim, onReturn }: { onNetworkChange: any, onReturn: any, type: string, onClaim: any, supportedChains: IChainData[], address: string, chainData: IChainData, contracts: any }): JSX.Element => {
   const [tokenSymbol, setTokenSymbol] = useState("")
 
   useEffect(() => {
@@ -20,12 +20,13 @@ const WalletSelect = ({ type, chainData, contracts, supportedChains, onClaim, on
   }, [chainData])
 
   return (
-    <Card sx={{ flexGrow: 1, display: "flex", alignItems: "center", p: 1 }}>
-      <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column", flexFlow: "wrap" }}>
+    <Card sx={{ display: "flex", alignItems: "center", p: 1 }}>
+      <Box sx={{ display: "flex", alignItems: "center", flexDirection: "column", flexFlow: "no-wrap" }}>
         <Select
           value={chainData?.chain_id}
           label="Network"
-          disabled
+          onChange={onNetworkChange}
+          disabled={type === "to"}
         >
           {supportedChains?.map((chain) => <MenuItem key={chain.chain_id} value={chain.chain_id}>{chain.name}</MenuItem>)}
         </Select>
@@ -33,16 +34,16 @@ const WalletSelect = ({ type, chainData, contracts, supportedChains, onClaim, on
           Wallet: {ellipseAddress(contracts.address)}
         </Typography>
       </Box>
-      <Box sx={{ alignItems: "flex-end", display: "flex", flexDirection: "column" }}>
-        <Box sx={{ display: "flex", flexDirection: "row", mt: 1, mb: 1 }}>
+      <Box sx={{ flexGrow: "1", display: "flex", flexDirection: "column" }}>
+        <Box sx={{ display: "flex", flexDirection: "row", mt: 1, mb: 1, justifyContent: "end" }}>
           <Typography variant="h5" component="div" >
-            {contracts.balance}&nbsp;
+            {parseFloat(contracts.balance)}&nbsp;
           </Typography>
           <Typography sx={{ color: "#017abd" }} variant="h5" component="div">
             {tokenSymbol}
           </Typography>
         </Box>
-        {!!contracts.bridged && contracts.bridged !== "0" && <TokenClaim type={type} onClaim={onClaim} onReturn={onReturn} tokenSymbol={tokenSymbol} bridged={contracts.bridged} />}
+        {!!contracts.bridged && parseFloat(contracts.bridged) !== 0 && <TokenClaim type={type} onClaim={onClaim} onReturn={onReturn} tokenSymbol={tokenSymbol} bridged={contracts.bridged} />}
       </Box>
     </Card>
   )

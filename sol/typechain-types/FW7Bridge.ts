@@ -9,6 +9,7 @@ import {
   CallOverrides,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -181,13 +182,13 @@ export interface FW7Bridge extends BaseContract {
     bridged(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     claimTokens(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     depositTokens(
       _receiver: string,
       _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     locked(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -205,7 +206,7 @@ export interface FW7Bridge extends BaseContract {
 
     returnTokens(
       _receiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     token(overrides?: CallOverrides): Promise<[string]>;
@@ -226,13 +227,13 @@ export interface FW7Bridge extends BaseContract {
   bridged(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   claimTokens(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   depositTokens(
     _receiver: string,
     _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   locked(overrides?: CallOverrides): Promise<BigNumber>;
@@ -247,7 +248,7 @@ export interface FW7Bridge extends BaseContract {
 
   returnTokens(
     _receiver: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   token(overrides?: CallOverrides): Promise<string>;
@@ -360,13 +361,13 @@ export interface FW7Bridge extends BaseContract {
     bridged(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     claimTokens(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     depositTokens(
       _receiver: string,
       _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     locked(overrides?: CallOverrides): Promise<BigNumber>;
@@ -384,7 +385,7 @@ export interface FW7Bridge extends BaseContract {
 
     returnTokens(
       _receiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     token(overrides?: CallOverrides): Promise<BigNumber>;
@@ -409,13 +410,13 @@ export interface FW7Bridge extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     claimTokens(
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     depositTokens(
       _receiver: string,
       _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     locked(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -433,7 +434,7 @@ export interface FW7Bridge extends BaseContract {
 
     returnTokens(
       _receiver: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
