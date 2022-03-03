@@ -16,6 +16,11 @@ const TransferControls = ({ balance, chainData, onDeposit }: { balance: string, 
     <Card sx={{ p: 1, ml: 1 }}>
       <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "row" }}>
         <TextField
+          InputProps={{
+              inputProps: {
+                  style: { textAlign: "right" },
+              }
+          }}
           sx={{ flexGrow: 1 }}
           required
           value={value}
@@ -24,7 +29,10 @@ const TransferControls = ({ balance, chainData, onDeposit }: { balance: string, 
           onChange={() => { setValue((valueRef.current as any)?.value) }}
         />
         <Button disabled={balance === "0"} sx={{ mr: 1 }} color="primary" onClick={() => { setValue(balance) }}>Max</Button>
-        <Button disabled={canDeposit()} color="secondary" onClick={() => onDeposit(value)}>{isBaseChain(chainData?.chain_id) ? "Transfer" : "Request"}</Button>
+        <Button disabled={canDeposit()} color="secondary" onClick={() => {
+          onDeposit(value)
+          setValue("0")
+        }}>{isBaseChain(chainData?.chain_id) ? "Transfer" : "Request"}</Button>
       </Box>
     </Card>
   )
