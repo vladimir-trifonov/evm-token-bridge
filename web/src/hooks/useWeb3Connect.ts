@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
-import WalletConnectProvider from '@walletconnect/web3-provider'
-import { providers } from 'ethers'
-import Web3Modal from 'web3modal'
+import { useCallback, useEffect, useState } from "react"
+import WalletConnectProvider from "@walletconnect/web3-provider"
+import { providers } from "ethers"
+import Web3Modal from "web3modal"
 
-import { getChainData, getProviderToChainData, getSupportedChains } from '../helpers/utilities'
-import { IChainData } from '../types'
+import { getChainData, getProviderToChainData, getSupportedChains } from "../helpers/utilities"
+import { IChainData } from "../types"
 
 const INFURA_ID = process.env.REACT_APP_INFURA_ID
 
@@ -18,7 +18,7 @@ const providerOptions = {
 }
 
 let web3Modal: any
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   web3Modal = new Web3Modal({
     cacheProvider: true,
     providerOptions, // required
@@ -48,7 +48,7 @@ const useWeb3Connect = (state: any, dispatch: any): any => {
     console.log("To address", toAddress)
 
     dispatch({
-      type: 'SET_WEB3_PROVIDER_FROM',
+      type: "SET_WEB3_PROVIDER_FROM",
       providerFrom,
       web3ProviderFrom,
       web3ProviderTo,
@@ -61,11 +61,11 @@ const useWeb3Connect = (state: any, dispatch: any): any => {
   const disconnect = useCallback(
     async function () {
       await web3Modal.clearCachedProvider()
-      if (providerFrom?.disconnect && typeof providerFrom.disconnect === 'function') {
+      if (providerFrom?.disconnect && typeof providerFrom.disconnect === "function") {
         await providerFrom.disconnect()
       }
       dispatch({
-        type: 'RESET_WEB3_PROVIDERS',
+        type: "RESET_WEB3_PROVIDERS",
       })
     },
     [dispatch, providerFrom]
@@ -80,9 +80,9 @@ const useWeb3Connect = (state: any, dispatch: any): any => {
   useEffect(() => {
     if (providerFrom?.on) {
       const handleAccountsChanged = (accounts: string[]) => {
-        console.log('accountsChanged', accounts)
+        console.log("accountsChanged", accounts)
         dispatch({
-          type: 'SET_ADDRESS',
+          type: "SET_ADDRESS",
           fromAddress: accounts[0],
         })
       }
@@ -92,20 +92,20 @@ const useWeb3Connect = (state: any, dispatch: any): any => {
       }
 
       const handleDisconnect = (error: { code: number; message: string }) => {
-        console.log('disconnect', error)
+        console.log("disconnect", error)
         disconnect()
       }
 
-      providerFrom.on('accountsChanged', handleAccountsChanged)
-      providerFrom.on('chainChanged', handleChainChanged)
-      providerFrom.on('disconnect', handleDisconnect)
+      providerFrom.on("accountsChanged", handleAccountsChanged)
+      providerFrom.on("chainChanged", handleChainChanged)
+      providerFrom.on("disconnect", handleDisconnect)
 
       // Subscription Cleanup
       return () => {
         if (providerFrom.removeListener) {
-          providerFrom.removeListener('accountsChanged', handleAccountsChanged)
-          providerFrom.removeListener('chainChanged', handleChainChanged)
-          providerFrom.removeListener('disconnect', handleDisconnect)
+          providerFrom.removeListener("accountsChanged", handleAccountsChanged)
+          providerFrom.removeListener("chainChanged", handleChainChanged)
+          providerFrom.removeListener("disconnect", handleDisconnect)
         }
       }
     }

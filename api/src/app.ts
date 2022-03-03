@@ -25,9 +25,6 @@ const sideContract = new ethers.Contract(SIDE_BRIDGE_CONTRACT_ADDRESS, SIDE_BRID
 const { address: sAdmin } = new ethers.Wallet(process.env.SIDE_BRIDGE_CONTRACT_ADDRESS_PRIVATE_KEY, sideProvider);
 
 async function listen() {
-    let baseNonce = await baseWeb3.eth.getTransactionCount(baseAdmin);
-    let sideNonce = await sideWeb3.eth.getTransactionCount(sideAdmin);
-
     const depositTransaction = async ({ from, amount, transactionHash }, bridgeContract, admin, web3) => {
         try {
             const tx = bridgeContract.methods.tokensBridged(from, amount, transactionHash);
@@ -40,7 +37,7 @@ async function listen() {
                 from: admin,
                 to: bridgeContract.options.address,
                 data,
-                nonce: web3.eth.getTransactionCount(baseAdmin),
+                nonce: await web3.eth.getTransactionCount(admin),
                 // gas: gasCost, // For Ropsten, Rinkeby, Kovan, Goerli
                 gasLimit: 6721975, // For Ganache, Hardhat
                 gasPrice
@@ -69,12 +66,11 @@ async function listen() {
                 from: admin,
                 to: bridgeContract.options.address,
                 data,
-                nonce: web3.eth.getTransactionCount(baseAdmin),
+                nonce: await web3.eth.getTransactionCount(admin),
                 // gas: gasCost, // For Ropsten, Rinkeby, Kovan, Goerli
                 gasLimit: 6721975, // For Ganache, Hardhat
                 gasPrice
             };
-            sideNonce++;
             const receipt = await web3.eth.sendTransaction(txData);
             console.log(`Transaction hash: ${receipt.transactionHash}`);
             console.log(`
@@ -87,19 +83,19 @@ async function listen() {
         }
     }
 
-    baseContract.on("DepositTokens", async (from, amount, { transactionHash }) => {
-        depositTransaction({ from, amount, transactionHash }, sideBridgeContract, sideAdmin, sideWeb3)
+    baseContract.on("DepositTokens", async (_, to, amount, { transactionHash }) => {
+        depositTransaction({ from: to, amount, transactionHash }, sideBridgeContract, sideAdmin, sideWeb3)
     })
 
-    sideContract.on("DepositTokens", async (from, amount, { transactionHash }) => {
-        depositTransaction({ from, amount, transactionHash }, baseBridgeContract, baseAdmin, baseWeb3)
+    sideContract.on("DepositTokens", async (_, to, amount, { transactionHash }) => {
+        depositTransaction({ from: to, amount, transactionHash }, baseBridgeContract, baseAdmin, baseWeb3)
     })
 
-    baseContract.on("ReturnTokens", async (to, amount, { transactionHash }) => {
+    baseContract.on("ReturnTokens", async (_, to, amount, { transactionHash }) => {
         returnTransaction({ to, amount, transactionHash }, sideBridgeContract, sideAdmin, sideWeb3)
     })
 
-    sideContract.on("ReturnTokens", async (to, amount, { transactionHash }) => {
+    sideContract.on("ReturnTokens", async (_, to, amount, { transactionHash }) => {
         returnTransaction({ to, amount, transactionHash }, baseBridgeContract, baseAdmin, baseWeb3)
     })
 

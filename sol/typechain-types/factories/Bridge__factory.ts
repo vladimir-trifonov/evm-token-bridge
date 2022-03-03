@@ -13,7 +13,7 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "sender",
+        name: "_sender",
         type: "address",
       },
       {
@@ -32,7 +32,13 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "receiver",
+        name: "_sender",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_receiver",
         type: "address",
       },
       {
@@ -70,7 +76,13 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "sender",
+        name: "_sender",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "_receiver",
         type: "address",
       },
       {

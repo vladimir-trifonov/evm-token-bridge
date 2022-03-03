@@ -98,9 +98,9 @@ export interface XFW7BridgeInterface extends utils.Interface {
 
   events: {
     "ClaimTokens(address,uint256)": EventFragment;
-    "DepositTokens(address,uint256)": EventFragment;
+    "DepositTokens(address,address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "ReturnTokens(address,uint256)": EventFragment;
+    "ReturnTokens(address,address,uint256)": EventFragment;
     "TokensBridged(address,uint256,bytes32)": EventFragment;
   };
 
@@ -113,14 +113,14 @@ export interface XFW7BridgeInterface extends utils.Interface {
 
 export type ClaimTokensEvent = TypedEvent<
   [string, BigNumber],
-  { sender: string; _amount: BigNumber }
+  { _sender: string; _amount: BigNumber }
 >;
 
 export type ClaimTokensEventFilter = TypedEventFilter<ClaimTokensEvent>;
 
 export type DepositTokensEvent = TypedEvent<
-  [string, BigNumber],
-  { receiver: string; _amount: BigNumber }
+  [string, string, BigNumber],
+  { _sender: string; _receiver: string; _amount: BigNumber }
 >;
 
 export type DepositTokensEventFilter = TypedEventFilter<DepositTokensEvent>;
@@ -134,8 +134,8 @@ export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
 export type ReturnTokensEvent = TypedEvent<
-  [string, BigNumber],
-  { sender: string; _amount: BigNumber }
+  [string, string, BigNumber],
+  { _sender: string; _receiver: string; _amount: BigNumber }
 >;
 
 export type ReturnTokensEventFilter = TypedEventFilter<ReturnTokensEvent>;
@@ -296,17 +296,22 @@ export interface XFW7Bridge extends BaseContract {
 
   filters: {
     "ClaimTokens(address,uint256)"(
-      sender?: string | null,
+      _sender?: string | null,
       _amount?: null
     ): ClaimTokensEventFilter;
-    ClaimTokens(sender?: string | null, _amount?: null): ClaimTokensEventFilter;
+    ClaimTokens(
+      _sender?: string | null,
+      _amount?: null
+    ): ClaimTokensEventFilter;
 
-    "DepositTokens(address,uint256)"(
-      receiver?: string | null,
+    "DepositTokens(address,address,uint256)"(
+      _sender?: string | null,
+      _receiver?: string | null,
       _amount?: null
     ): DepositTokensEventFilter;
     DepositTokens(
-      receiver?: string | null,
+      _sender?: string | null,
+      _receiver?: string | null,
       _amount?: null
     ): DepositTokensEventFilter;
 
@@ -319,12 +324,14 @@ export interface XFW7Bridge extends BaseContract {
       newOwner?: string | null
     ): OwnershipTransferredEventFilter;
 
-    "ReturnTokens(address,uint256)"(
-      sender?: string | null,
+    "ReturnTokens(address,address,uint256)"(
+      _sender?: string | null,
+      _receiver?: string | null,
       _amount?: null
     ): ReturnTokensEventFilter;
     ReturnTokens(
-      sender?: string | null,
+      _sender?: string | null,
+      _receiver?: string | null,
       _amount?: null
     ): ReturnTokensEventFilter;
 

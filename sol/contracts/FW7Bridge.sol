@@ -14,7 +14,7 @@ contract FW7Bridge is Bridge {
       locked += _amount;
       require(locked >= _amount, "Total locked overflow");
       require(token.transferFrom(msg.sender, address(this), _amount), "Failed to transfer");
-      emit DepositTokens(_receiver, _amount);
+      emit DepositTokens(msg.sender, _receiver, _amount);
     }
 
      function tokensBridged (address _receiver, uint256 _amount, bytes32 _otherChainTransactionHash) external onlyOwner {
@@ -32,8 +32,7 @@ contract FW7Bridge is Bridge {
         require(locked >= amount, "Insufficient locked tokens");
         locked -= amount;
         delete bridged[msg.sender];
-        token.approve(msg.sender, amount);
-        require(token.transferFrom(address(this), msg.sender, amount), "Failed to transfer");
+        require(token.transfer(msg.sender, amount), "Failed to transfer");
         emit ClaimTokens(msg.sender, amount);
     }
 
@@ -41,6 +40,6 @@ contract FW7Bridge is Bridge {
         uint256 amount = bridged[msg.sender];
         require(amount > 0, "Insufficient bridged tokens");
         delete bridged[msg.sender];
-        emit ReturnTokens(_receiver, amount);
+        emit ReturnTokens(msg.sender, _receiver, amount);
     }
 }

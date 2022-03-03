@@ -9,7 +9,7 @@ contract XFW7Bridge is Bridge {
 
     function depositTokens(address _receiver, uint256 _amount) external {
       token.burnFrom(msg.sender, _amount); // Could be issue
-      emit DepositTokens(_receiver, _amount);
+      emit DepositTokens(msg.sender, _receiver, _amount);
     }
 
     function claimTokens() external {
@@ -33,6 +33,6 @@ contract XFW7Bridge is Bridge {
         uint256 amount = bridged[msg.sender];
         require(amount > 0, "Insufficient bridged tokens");
         delete bridged[msg.sender];
-        emit ReturnTokens(_receiver, amount);
+        emit ReturnTokens(msg.sender, _receiver, amount);
     }
 }

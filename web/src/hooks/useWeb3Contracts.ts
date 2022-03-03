@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
-import { isBaseChain } from '../helpers/utilities'
-import { getContract } from '../helpers/ethers'
-import FW7Token from '../constants/abis/FW7Token.json'
-import FW7Bridge from '../constants/abis/FW7Bridge.json'
-import XFW7Token from '../constants/abis/XFW7Token.json'
-import XFW7Bridge from '../constants/abis/XFW7Bridge.json'
+import { useCallback, useEffect, useState } from "react"
+import { isBaseChain } from "../helpers/utilities"
+import { getContract } from "../helpers/ethers"
+import FW7Token from "../constants/abis/FW7Token.json"
+import FW7Bridge from "../constants/abis/FW7Bridge.json"
+import XFW7Token from "../constants/abis/XFW7Token.json"
+import XFW7Bridge from "../constants/abis/XFW7Bridge.json"
 
 const baseChainTokenAddress = process.env.REACT_APP_FW7_TOKEN_ADDRESS as string
 const baseChainBridgeAddress = process.env.REACT_APP_FW7_BRIDGE_ADDRESS as string
@@ -29,10 +29,10 @@ const useWeb3Contracts = (state: any): any => {
     const baseChainProvider = isProviderFromBaseChain ? web3ProviderFrom : web3ProviderTo
     const sideChainProvider = isProviderFromBaseChain ? web3ProviderTo : web3ProviderFrom
 
-    const fw7TokenContract = getContract(baseChainTokenAddress as string, FW7Token.abi, baseChainProvider.getSigner())
-    const fw7BridgeContract = getContract(baseChainBridgeAddress as string, FW7Bridge.abi, baseChainProvider.getSigner())
-    const xFw7TokenContract = getContract(sideChainTokenAddress as string, XFW7Token.abi, sideChainProvider.getSigner())
-    const xFfw7BridgeContract = getContract(sideChainBridgeAddress as string, XFW7Bridge.abi, sideChainProvider.getSigner())
+    const fw7TokenContract = getContract(baseChainTokenAddress as string, FW7Token.abi, isProviderFromBaseChain ? baseChainProvider.getSigner() : baseChainProvider)
+    const fw7BridgeContract = getContract(baseChainBridgeAddress as string, FW7Bridge.abi, isProviderFromBaseChain ? baseChainProvider.getSigner() : baseChainProvider)
+    const xFw7TokenContract = getContract(sideChainTokenAddress as string, XFW7Token.abi, isProviderFromBaseChain ? sideChainProvider : sideChainProvider.getSigner())
+    const xFfw7BridgeContract = getContract(sideChainBridgeAddress as string, XFW7Bridge.abi, isProviderFromBaseChain ? sideChainProvider: sideChainProvider.getSigner())
     
     setTokenFromContract(isProviderFromBaseChain ? fw7TokenContract : xFw7TokenContract)
     setBridgeFromContract(isProviderFromBaseChain ? fw7BridgeContract : xFfw7BridgeContract)
@@ -55,39 +55,41 @@ const useWeb3Contracts = (state: any): any => {
     }
   }, [chainId, getContracts, web3ProviderFrom, web3ProviderTo])
 
-  useEffect(() => {
-    const getFromBalance = async () => {
-      const balance = await tokenFromContract?.balanceOf(fromAddress)
-      setFromBalance(balance.toString())
-    }
+  
+  
+  const getToBalance = useCallback(async () => {
+    const balance = await tokenToContract?.balanceOf(toAddress)
+    setToBalance(balance.toString())
+  }, [toAddress, tokenToContract])
 
-    const getFromBridged = async () => {
-      const bridged = await bridgeFromContract?.bridged(fromAddress)
-      setFromBridged(bridged.toString())
-    }
-    
+  const getToBridged = useCallback(async () => {
+    const bridged = await bridgeToContract?.bridged(toAddress)
+    setToBridged(bridged.toString())
+  }, [bridgeToContract, toAddress])
+
+  const getFromBalance = useCallback(async () => {
+    const balance = await tokenFromContract?.balanceOf(fromAddress)
+    setFromBalance(balance.toString())
+  }, [fromAddress, tokenFromContract])
+
+  const getFromBridged = useCallback(async () => {
+    const bridged = await bridgeFromContract?.bridged(fromAddress)
+    setFromBridged(bridged.toString())
+  }, [bridgeFromContract, fromAddress])
+
+  useEffect(() => {
     if (tokenFromContract && fromAddress) {
       getFromBalance()
       getFromBridged()
     }
-  }, [bridgeFromContract, fromAddress, tokenFromContract])
+  }, [fromAddress, getFromBalance, getFromBridged, tokenFromContract])
 
   useEffect(() => {
-    const getToBalance = async () => {
-      const balance = await tokenToContract?.balanceOf(toAddress)
-      setToBalance(balance.toString())
-    }
-
-    const getToBridged = async () => {
-      const bridged = await bridgeToContract?.bridged(toAddress)
-      setToBridged(bridged.toString())
-    }
-    
     if (tokenToContract && toAddress) {
       getToBalance()
       getToBridged()
     }
-  }, [bridgeToContract, toAddress, tokenToContract])
+  }, [getToBalance, getToBridged, toAddress, tokenToContract])
 
   const onDeposit = async (amount: string) => {
     await tokenFromContract.approve(isBaseChain(chainId) ? baseChainBridgeAddress : sideChainBridgeAddress, amount);
@@ -104,6 +106,75 @@ const useWeb3Contracts = (state: any): any => {
 		const transaction = await (type === "from" ? bridgeFromContract : bridgeToContract).returnTokens(toAddress);
     await transaction.wait();
   }
+
+  useEffect(() => {
+    if (bridgeFromContract?.on) {
+      const handleReturnTokens = () => {
+        getFromBridged()
+      }
+
+      const bridgeReturnFromFilter = bridgeFromContract.filters.ReturnTokens(fromAddress);
+      bridgeFromContract.on(bridgeReturnFromFilter, handleReturnTokens)
+
+      return () => {
+        if (bridgeFromContract.off) {
+          bridgeFromContract.off(bridgeReturnFromFilter, handleReturnTokens)
+        }
+      }
+    }
+  }, [bridgeFromContract, fromAddress, getFromBridged])
+
+  useEffect(() => {
+    if (bridgeFromContract?.on) {
+      const handleClaimTokens = () => {
+        getFromBalance()
+        getFromBridged()
+      }
+
+      const bridgeClaimFromFilter = bridgeFromContract.filters.ClaimTokens(fromAddress);
+      bridgeFromContract.on(bridgeClaimFromFilter, handleClaimTokens)
+
+      return () => {
+        if (bridgeFromContract.off) {
+          bridgeFromContract.off(bridgeClaimFromFilter, handleClaimTokens)
+        }
+      }
+    }
+  }, [bridgeFromContract, fromAddress, getFromBalance, getFromBridged])
+
+  useEffect(() => {
+    if (bridgeFromContract?.on) {
+      const handleDepositTokens = () => {
+        getFromBalance()
+      }
+
+      const bridgeDepositFromFilter = bridgeFromContract.filters.DepositTokens(fromAddress);
+      bridgeFromContract.on(bridgeDepositFromFilter, handleDepositTokens)
+
+      return () => {
+        if (bridgeFromContract.off) {
+          bridgeFromContract.off(bridgeDepositFromFilter, handleDepositTokens)
+        }
+      }
+    }
+  }, [bridgeFromContract, fromAddress, getFromBalance])
+
+  useEffect(() => {
+    if (bridgeToContract?.on) {
+      const handleTokensBridged = () => {
+        getToBridged()
+      }
+
+      const bridgeBridgedToFilter = bridgeToContract.filters.TokensBridged(toAddress);
+      bridgeToContract.on(bridgeBridgedToFilter, handleTokensBridged)
+
+      return () => {
+        if (bridgeToContract.off) {
+          bridgeToContract.off(bridgeBridgedToFilter, handleTokensBridged)
+        }
+      }
+    }
+  }, [bridgeToContract, getToBridged, toAddress])
   
   return [{ onDeposit, onClaim, onReturn }, { from: { address: fromAddress, balance: fromBalance, bridged: fromBridged }, to: { address: toAddress, balance: toBalance, bridged: toBridged }}]
 }

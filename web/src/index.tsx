@@ -8,7 +8,7 @@ import reportWebVitals from "./reportWebVitals"
 
 const darkTheme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: "dark",
   },
 })
 

@@ -1,4 +1,4 @@
-import { constants, utils, Contract } from 'ethers'
+import { constants, utils, Contract } from "ethers"
 
 export function isAddress(value: string) {
   try {
@@ -10,7 +10,7 @@ export function isAddress(value: string) {
 
 export function getContract(address: string, ABI: any, providerOrSigner: any) {
   if (!isAddress(address) || address === constants.AddressZero) {
-    throw Error(`Invalid 'address' parameter '${address}'.`);
+    throw Error(`Invalid "address" parameter "${address}".`);
   }
 
   return new Contract(address, ABI, providerOrSigner);
