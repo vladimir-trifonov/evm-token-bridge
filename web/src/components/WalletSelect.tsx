@@ -21,29 +21,28 @@ const WalletSelect = ({ type, chainData, contracts, onNetworkChange, supportedCh
 
   return (
     <Card sx={{ display: "flex", alignItems: "center", p: 1 }}>
-      <Box sx={{ display: "flex", alignItems: "center", flexDirection: "column", flexFlow: "no-wrap" }}>
+      <Box sx={{ display: "flex", alignItems: "center", flexDirection: "column", mt: 1, flexFlow: "no-wrap" }}>
         <Select
           value={chainData?.chain_id}
           label="Network"
           onChange={onNetworkChange}
-          disabled={type === "to"}
         >
           {supportedChains?.map((chain) => <MenuItem key={chain.chain_id} value={chain.chain_id}>{chain.name}</MenuItem>)}
         </Select>
-        <Typography sx={{ textAlign: "right", fontSize: "0.7rem", color: "rgba(255,255,255,0.5)", mb: 0.5 }} variant="caption" >
+        <Typography sx={{ mt: 1, textAlign: "right", fontSize: "0.7rem", color: "rgba(255,255,255,0.5)", mb: 0.5 }} variant="caption" >
           Wallet: {ellipseAddress(contracts.address)}
         </Typography>
       </Box>
       <Box sx={{ flexGrow: "1", display: "flex", flexDirection: "column" }}>
-        <Box sx={{ display: "flex", flexDirection: "row", mt: 1, mb: 1, justifyContent: "end" }}>
-          <Typography variant="h5" component="div" >
-            {parseFloat(contracts.balance)}&nbsp;
+        <Box sx={{ display: "flex", flexDirection: "row", ml: 1, mt: 1, mb: 1, justifyContent: "end" }}>
+          <Typography variant="h5" component="div">
+            {contracts.balance}&nbsp;
           </Typography>
           <Typography sx={{ color: "#017abd" }} variant="h5" component="div">
             {tokenSymbol}
           </Typography>
         </Box>
-        {!!contracts.bridged && parseFloat(contracts.bridged) !== 0 && <TokenClaim type={type} onClaim={onClaim} onReturn={onReturn} tokenSymbol={tokenSymbol} bridged={contracts.bridged} />}
+        {!!contracts.bridged && contracts.bridged !== "0.0" && <TokenClaim type={type} onClaim={onClaim} onReturn={onReturn} tokenSymbol={tokenSymbol} bridged={contracts.bridged} />}
       </Box>
     </Card>
   )

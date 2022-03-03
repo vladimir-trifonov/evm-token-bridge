@@ -13,7 +13,7 @@ const TransferControls = ({ balance, chainData, onDeposit }: { balance: string, 
   const canDeposit = () => balance === "0" || parseFloat(value) <= 0 || parseFloat(value) > parseFloat(balance) || isNaN(parseFloat(value))
 
   return (
-    <Card sx={{ p: 1 }}>
+    <Card sx={{ p: 1, ml: 1 }}>
       <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "row" }}>
         <TextField
           sx={{ flexGrow: 1 }}
@@ -23,7 +23,7 @@ const TransferControls = ({ balance, chainData, onDeposit }: { balance: string, 
           disabled={balance === "0"}
           onChange={() => { setValue((valueRef.current as any)?.value) }}
         />
-        <Button disabled={balance === "0"} sx={{ ml: 1, mr: 1 }} color="primary" onClick={() => { setValue(balance) }}>Max</Button>
+        <Button disabled={balance === "0"} sx={{ mr: 1 }} color="primary" onClick={() => { setValue(balance) }}>Max</Button>
         <Button disabled={canDeposit()} color="secondary" onClick={() => onDeposit(value)}>{isBaseChain(chainData?.chain_id) ? "Transfer" : "Request"}</Button>
       </Box>
     </Card>

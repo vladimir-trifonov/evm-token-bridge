@@ -48,7 +48,7 @@ export const Home = (): JSX.Element => {
       {web3ProviderFrom && (
         <Container fixed sx={{ height: "80vh" }}>
           <Grid container sx={{ height: "100%", justifyContent: "center", alignItems: "center" }}>
-            <Grid item xs={5}>
+            <Grid item>
               <Bridge 
                 onNetworkChange={onNetworkChange}
                 fromAddress={fromAddress} 
