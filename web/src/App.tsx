@@ -38,7 +38,7 @@ export const Home = (): JSX.Element => {
             </Box>
             {!!chainDataFrom && <NetworkInfo chainData={chainDataFrom} address={fromAddress}/>}
             {!!web3ProviderFrom && !chainDataFrom && (
-              <Typography sx={{ color: "red" }} variant="caption" component="div" >
+              <Typography sx={{ color: "red", mr: 1 }} variant="caption" component="div" >
                 Not supported chain
               </Typography>
             )}

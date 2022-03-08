@@ -41,7 +41,6 @@ const useWeb3Connect = (state: any, dispatch: any): any => {
       const network = await web3ProviderFrom.getNetwork()
 
       const providerToChainData = getProviderToChainData(network)
-      console.log("From address", fromAddress)
 
       let web3ProviderTo = null
       let toAddress = null
@@ -55,9 +54,7 @@ const useWeb3Connect = (state: any, dispatch: any): any => {
         try {
           toAddress = await toSigner.getAddress()
         } catch (e) {}
-        console.log("To address", toAddress)
       }
-
 
       dispatch({
         type: "SET_WEB3_PROVIDER_FROM",
