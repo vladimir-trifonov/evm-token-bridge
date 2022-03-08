@@ -7,7 +7,7 @@ export function isBaseChain(chainId: number) {
 
 export function getSupportedChains(chainId: number): IChainData[] {
   return [chainId, (isBaseChain(chainId) ? sideChainsIds[baseChainsIds.indexOf(chainId)] : baseChainsIds[sideChainsIds.indexOf(chainId)])]
-    .map((id) => supportedChains.find(({ chain_id }) => chain_id === id) as IChainData)
+    .map((id) => supportedChains.find(({ chain_id }) => chain_id === id) as IChainData).filter((chainData) => !!chainData)
 }
 
 export function getTokenSymbol(chainId: number) {
@@ -18,7 +18,8 @@ export function getProviderToChainData(network: any) {
   const providerToChainId = isBaseChain(network.chainId) 
     ? sideChainsIds[baseChainsIds.indexOf(network.chainId)] 
     : baseChainsIds[sideChainsIds.indexOf(network.chainId)]
-  return supportedChains.find((chainData) => chainData.chain_id === providerToChainId) || null
+  const chainDataRaw = supportedChains.find((chainData) => chainData.chain_id === providerToChainId)
+  return chainDataRaw ? getChainData(chainDataRaw.chain_id) : null
 }
 
 export function getChainData(chainId?: number): IChainData | null {
@@ -29,9 +30,7 @@ export function getChainData(chainId?: number): IChainData | null {
     (chain: IChainData) => chain.chain_id === chainId
   )[0]
 
-  if (!chainData) {
-    throw new Error(`ChainId missing or not supported: ${chainData}`)
-  }
+  if (!chainData) return null
 
   const API_KEY = process.env.REACT_APP_INFURA_ID
 

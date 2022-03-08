@@ -27,7 +27,7 @@ type ChainType = {
   name?: string
 }
 
-const NetworkInfo = ({ chainData, address }: { chainData: ChainType; address: string}): JSX.Element => {
+const NetworkInfo = ({ chainData, address }: { chainData: ChainType, address: string}): JSX.Element => {
   return (
     <>
       {address && (

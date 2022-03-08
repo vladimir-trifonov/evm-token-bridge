@@ -23,7 +23,8 @@ export interface FW7BridgeInterface extends utils.Interface {
   functions: {
     "bridged(address)": FunctionFragment;
     "claimTokens()": FunctionFragment;
-    "depositTokens(address,uint256)": FunctionFragment;
+    "depositTokens(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
+    "fee()": FunctionFragment;
     "locked()": FunctionFragment;
     "owner()": FunctionFragment;
     "processedHashes(bytes32)": FunctionFragment;
@@ -32,6 +33,7 @@ export interface FW7BridgeInterface extends utils.Interface {
     "token()": FunctionFragment;
     "tokensBridged(address,uint256,bytes32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "withdraw()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "bridged", values: [string]): string;
@@ -41,8 +43,16 @@ export interface FW7BridgeInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "depositTokens",
-    values: [string, BigNumberish]
+    values: [
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BytesLike,
+      BytesLike
+    ]
   ): string;
+  encodeFunctionData(functionFragment: "fee", values?: undefined): string;
   encodeFunctionData(functionFragment: "locked", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -66,6 +76,7 @@ export interface FW7BridgeInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "bridged", data: BytesLike): Result;
   decodeFunctionResult(
@@ -76,6 +87,7 @@ export interface FW7BridgeInterface extends utils.Interface {
     functionFragment: "depositTokens",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "fee", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "locked", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
@@ -99,6 +111,7 @@ export interface FW7BridgeInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
     "ClaimTokens(address,uint256)": EventFragment;
@@ -188,8 +201,14 @@ export interface FW7Bridge extends BaseContract {
     depositTokens(
       _receiver: string,
       _amount: BigNumberish,
+      _deadline: BigNumberish,
+      _v: BigNumberish,
+      _r: BytesLike,
+      _s: BytesLike,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    fee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     locked(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -222,6 +241,10 @@ export interface FW7Bridge extends BaseContract {
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    withdraw(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   bridged(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
@@ -233,8 +256,14 @@ export interface FW7Bridge extends BaseContract {
   depositTokens(
     _receiver: string,
     _amount: BigNumberish,
+    _deadline: BigNumberish,
+    _v: BigNumberish,
+    _r: BytesLike,
+    _s: BytesLike,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  fee(overrides?: CallOverrides): Promise<BigNumber>;
 
   locked(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -265,6 +294,10 @@ export interface FW7Bridge extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  withdraw(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     bridged(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -273,8 +306,14 @@ export interface FW7Bridge extends BaseContract {
     depositTokens(
       _receiver: string,
       _amount: BigNumberish,
+      _deadline: BigNumberish,
+      _v: BigNumberish,
+      _r: BytesLike,
+      _s: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    fee(overrides?: CallOverrides): Promise<BigNumber>;
 
     locked(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -302,6 +341,8 @@ export interface FW7Bridge extends BaseContract {
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    withdraw(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -367,8 +408,14 @@ export interface FW7Bridge extends BaseContract {
     depositTokens(
       _receiver: string,
       _amount: BigNumberish,
+      _deadline: BigNumberish,
+      _v: BigNumberish,
+      _r: BytesLike,
+      _s: BytesLike,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    fee(overrides?: CallOverrides): Promise<BigNumber>;
 
     locked(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -401,6 +448,10 @@ export interface FW7Bridge extends BaseContract {
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    withdraw(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -416,8 +467,14 @@ export interface FW7Bridge extends BaseContract {
     depositTokens(
       _receiver: string,
       _amount: BigNumberish,
+      _deadline: BigNumberish,
+      _v: BigNumberish,
+      _r: BytesLike,
+      _s: BytesLike,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    fee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     locked(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -448,6 +505,10 @@ export interface FW7Bridge extends BaseContract {
 
     transferOwnership(
       newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdraw(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

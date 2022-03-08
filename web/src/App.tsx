@@ -36,7 +36,12 @@ export const Home = (): JSX.Element => {
               Bridge
               </Typography>
             </Box>
-            <NetworkInfo chainData={chainDataFrom} address={fromAddress}/>
+            {!!chainDataFrom && <NetworkInfo chainData={chainDataFrom} address={fromAddress}/>}
+            {!!web3ProviderFrom && !chainDataFrom && (
+              <Typography sx={{ color: "red" }} variant="caption" component="div" >
+                Not supported chain
+              </Typography>
+            )}
             {web3ProviderFrom ? (
                 <Button color="inherit" onClick={disconnect}>Disconnect</Button>
             ) : (
@@ -45,7 +50,7 @@ export const Home = (): JSX.Element => {
           </Toolbar>
         </AppBar>
       </Box>
-      {web3ProviderFrom && (
+      {chainDataFrom && web3ProviderFrom && (
         <Container fixed sx={{ height: "80vh" }}>
           <Grid container sx={{ height: "100%", justifyContent: "center", alignItems: "center" }}>
             <Grid item>

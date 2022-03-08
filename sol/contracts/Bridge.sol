@@ -9,20 +9,32 @@ abstract contract Bridge is Ownable {
     mapping(address => uint256) public bridged;
     mapping(bytes32 => bool) public processedHashes;
 
-    event DepositTokens(address indexed _sender, address indexed _receiver, uint256 _amount);
-    event TokensBridged(address indexed _receiver, uint _amount, bytes32 _otherChainTransactionHash);
-    event ReturnTokens(address indexed _sender, address indexed _receiver, uint _amount);
+    event DepositTokens(
+        address indexed _sender,
+        address indexed _receiver,
+        uint256 _amount
+    );
+    event TokensBridged(
+        address indexed _receiver,
+        uint256 _amount,
+        bytes32 _otherChainTransactionHash
+    );
+    event ReturnTokens(
+        address indexed _sender,
+        address indexed _receiver,
+        uint256 _amount
+    );
     event ClaimTokens(address indexed _sender, uint256 _amount);
 
     constructor(address _token) {
-      token = IToken(_token);
+        token = IToken(_token);
     }
 
     fallback() external payable {
-      revert("Don't accept any Ether");
+        revert("Don't accept any Ether");
     }
 
     receive() external payable {
-      revert("Don't accept any Ether");
+        revert("Don't accept any Ether");
     }
 }

@@ -8,7 +8,16 @@ import { getTokenSymbol, ellipseAddress } from "../helpers/utilities"
 import TokenClaim from "./TokenClaim"
 import { useEffect, useState } from "react"
 
-const WalletSelect = ({ type, chainData, contracts, onNetworkChange, supportedChains, onClaim, onReturn }: { onNetworkChange: any, onReturn: any, type: string, onClaim: any, supportedChains: IChainData[], address: string, chainData: IChainData, contracts: any }): JSX.Element => {
+const WalletSelect = ({ canChangeNetwork, chainData, contracts, onNetworkChange, supportedChains, onClaim, onReturn }: { 
+  canChangeNetwork: boolean,
+  onNetworkChange: any, 
+  onReturn?: any, 
+  onClaim?: any, 
+  supportedChains: IChainData[], 
+  address: string, 
+  chainData: IChainData, 
+  contracts: any 
+}): JSX.Element => {
   const [tokenSymbol, setTokenSymbol] = useState("")
 
   useEffect(() => {
@@ -26,6 +35,7 @@ const WalletSelect = ({ type, chainData, contracts, onNetworkChange, supportedCh
           value={chainData?.chain_id}
           label="Network"
           onChange={onNetworkChange}
+          disabled={!canChangeNetwork}
         >
           {supportedChains?.map((chain) => <MenuItem key={chain.chain_id} value={chain.chain_id}>{chain.name}</MenuItem>)}
         </Select>
@@ -42,7 +52,7 @@ const WalletSelect = ({ type, chainData, contracts, onNetworkChange, supportedCh
             {tokenSymbol}
           </Typography>
         </Box>
-        {!!contracts.bridged && contracts.bridged !== "0.0" && <TokenClaim type={type} onClaim={onClaim} onReturn={onReturn} tokenSymbol={tokenSymbol} bridged={contracts.bridged} />}
+        {!!contracts.bridged && contracts.bridged !== "0.0" && <TokenClaim onClaim={onClaim} onReturn={onReturn} tokenSymbol={tokenSymbol} bridged={contracts.bridged} />}
       </Box>
     </Card>
   )

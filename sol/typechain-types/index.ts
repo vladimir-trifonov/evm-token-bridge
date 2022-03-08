@@ -3,6 +3,8 @@
 /* eslint-disable */
 export type { Ownable } from "./Ownable";
 export type { ERC20 } from "./ERC20";
+export type { ERC20Permit } from "./ERC20Permit";
+export type { IERC20Permit } from "./IERC20Permit";
 export type { ERC20Burnable } from "./ERC20Burnable";
 export type { IERC20Metadata } from "./IERC20Metadata";
 export type { IERC20 } from "./IERC20";
@@ -15,6 +17,8 @@ export type { XFW7Token } from "./XFW7Token";
 
 export { Ownable__factory } from "./factories/Ownable__factory";
 export { ERC20__factory } from "./factories/ERC20__factory";
+export { ERC20Permit__factory } from "./factories/ERC20Permit__factory";
+export { IERC20Permit__factory } from "./factories/IERC20Permit__factory";
 export { ERC20Burnable__factory } from "./factories/ERC20Burnable__factory";
 export { IERC20Metadata__factory } from "./factories/IERC20Metadata__factory";
 export { IERC20__factory } from "./factories/IERC20__factory";

@@ -40,12 +40,10 @@ const config: HardhatUserConfig = {
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
-    ganache: {
-      url: "http://127.0.0.1:7545",
+    rinkeby: {
+      url: process.env.RINKEBY_URL || "",
       accounts:
-        process.env.GANACHE_PRIVATE_KEY !== undefined
-          ? [process.env.GANACHE_PRIVATE_KEY]
-          : [],
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
   },
   gasReporter: {

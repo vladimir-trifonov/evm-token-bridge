@@ -1,25 +1,9 @@
 import { IChainData } from "../types"
 
-export const baseChainsIds = [1, 3, 31337]
-export const sideChainsIds = [56, 97, 2222]
+export const baseChainsIds = [3, 31337]
+export const sideChainsIds = [4, 2222]
 
 const supportedChains: IChainData[] = [
-  {
-    name: "Ethereum Mainnet",
-    short_name: "eth",
-    chain: "ETH",
-    network: "mainnet",
-    chain_id: 1,
-    network_id: 1,
-    rpc_url: "https://mainnet.infura.io/v3/%API_KEY%",
-    native_currency: {
-      symbol: "ETH",
-      name: "Ethereum",
-      decimals: "18",
-      contractAddress: "",
-      balance: "",
-    },
-  },
   {
     name: "Ethereum Ropsten",
     short_name: "rop",
@@ -37,32 +21,16 @@ const supportedChains: IChainData[] = [
     },
   },
   {
-    name: "Binance Smart Chain",
-    short_name: "bnb",
-    chain: "BSC",
-    network: "mainnet",
-    chain_id: 56,
-    network_id: 56,
-    rpc_url: "https://bsc-dataseed1.defibit.io/",
+    name: "Ethereum Rinkeby",
+    short_name: "rin",
+    chain: "ETH",
+    network: "rinkeby",
+    chain_id: 4,
+    network_id: 4,
+    rpc_url: "https://rinkeby.infura.io/v3/%API_KEY%",
     native_currency: {
-      symbol: "BNB",
-      name: "BNB",
-      decimals: "18",
-      contractAddress: "",
-      balance: "",
-    },
-  },
-  {
-    name: "Binance Chain Testnet",
-    short_name: "bnbt",
-    chain: "BSC",
-    network: "chapel",
-    chain_id: 97,
-    network_id: 97,
-    rpc_url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-    native_currency: {
-      symbol: "tBNB",
-      name: "BNB",
+      symbol: "ETH",
+      name: "Ethereum",
       decimals: "18",
       contractAddress: "",
       balance: "",

@@ -1,10 +1,12 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import { ThemeProvider, createTheme } from "@mui/material"
+import { ToastContainer } from 'react-toastify'
 
 import "./index.css"
 import App from "./App"
 import reportWebVitals from "./reportWebVitals"
+import 'react-toastify/dist/ReactToastify.css';
 
 const darkTheme = createTheme({
   palette: {
@@ -16,6 +18,7 @@ ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={darkTheme}>
       <App />
+      <ToastContainer theme="dark" />
     </ThemeProvider>
   </React.StrictMode>,
   document.getElementById("root")
