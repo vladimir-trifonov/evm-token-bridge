@@ -67,6 +67,7 @@ const useWeb3Connect = (state: any, dispatch: any): any => {
       })
     } catch (e: any) {
       toast.info(e.message)
+      console.warn(e)
     }
   }, [dispatch])
 
@@ -82,6 +83,7 @@ const useWeb3Connect = (state: any, dispatch: any): any => {
         })
       } catch (e: any) {
         toast.info(e.message)
+        console.warn(e)
       }
     },
     [dispatch, providerFrom]

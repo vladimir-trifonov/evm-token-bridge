@@ -1,7 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import { ThemeProvider, createTheme } from "@mui/material"
-import { ToastContainer } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
 
 import "./index.css"
 import App from "./App"
@@ -18,7 +18,7 @@ ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={darkTheme}>
       <App />
-      <ToastContainer theme="dark" />
+      <ToastContainer theme="dark" autoClose={false} style={{ width: "700px" }} position={toast.POSITION.TOP_CENTER} />
     </ThemeProvider>
   </React.StrictMode>,
   document.getElementById("root")

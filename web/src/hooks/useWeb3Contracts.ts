@@ -21,8 +21,8 @@ const useWeb3Contracts = (state: any): any => {
 
   const [fromBalance, setFromBalance] = useState("0")
   const [toBalance, setToBalance] = useState("0")
-  const [fromBridged, setFromBridged] = useState("0")
-  const [toBridged, setToBridged] = useState("0")
+  const [fromBridged, setFromBridged] = useState("0.0")
+  const [toBridged, setToBridged] = useState("0.0")
 
   const [tokenFromContract, setTokenFromContract] = useState<null | any>(null)
   const [bridgeFromContract, setBridgeFromContract] = useState<null | any>(null)
@@ -46,6 +46,7 @@ const useWeb3Contracts = (state: any): any => {
       setBridgeToContract(isProviderFromBaseChain ? xFfw7BridgeContract : fw7BridgeContract)
     } catch (e: any) {
       toast.info(e.message)
+      console.warn(e)
     }
   }, [chainId, web3ProviderFrom, web3ProviderTo])
 
@@ -71,6 +72,7 @@ const useWeb3Contracts = (state: any): any => {
     } catch (e: any) {
       setToBalance("")
       toast.info(e.message)
+      console.warn(e)
     }
   }, [toAddress, tokenToContract])
 
@@ -79,8 +81,9 @@ const useWeb3Contracts = (state: any): any => {
       const bridged = await bridgeToContract?.bridged(toAddress)
       setToBridged(utils.formatEther(bridged.toString()).toString())
     } catch (e: any) {
-      setToBridged("0")
+      setToBridged("0.0")
       toast.info(e.message)
+      console.warn(e)
     }
   }, [bridgeToContract, toAddress])
 
@@ -91,6 +94,7 @@ const useWeb3Contracts = (state: any): any => {
     } catch (e: any) {
       setFromBalance("")
       toast.info(e.message)
+      console.warn(e)
     }
   }, [fromAddress, tokenFromContract])
 
@@ -99,8 +103,9 @@ const useWeb3Contracts = (state: any): any => {
       const bridged = await bridgeFromContract?.bridged(fromAddress)
       setFromBridged(utils.formatEther(bridged.toString()).toString())
     } catch (e: any) {
-      setFromBridged("0")
+      setFromBridged("0.0")
       toast.info(e.message)
+      console.warn(e)
     }
   }, [bridgeFromContract, fromAddress])
 
@@ -133,6 +138,7 @@ const useWeb3Contracts = (state: any): any => {
       await transaction.wait()
     } catch (e: any) {
       toast.info(e.message)
+      console.warn(e)
     }
   }
 
@@ -142,6 +148,7 @@ const useWeb3Contracts = (state: any): any => {
       await transaction.wait()
     } catch (e: any) {
       toast.info(e.message)
+      console.warn(e)
     }
   }
 
@@ -151,6 +158,7 @@ const useWeb3Contracts = (state: any): any => {
       await transaction.wait()
     } catch (e: any) {
       toast.info(e.message)
+      console.warn(e)
     }
   }
 
