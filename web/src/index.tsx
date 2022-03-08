@@ -18,7 +18,7 @@ ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={darkTheme}>
       <App />
-      <ToastContainer theme="dark" autoClose={false} style={{ width: "700px" }} position={toast.POSITION.TOP_CENTER} />
+      <ToastContainer theme="dark" style={{ width: "700px" }} position={toast.POSITION.TOP_CENTER} />
     </ThemeProvider>
   </React.StrictMode>,
   document.getElementById("root")
