@@ -36,7 +36,7 @@ FW7Bridge deployed to: 0x...
 - Verify FW7Token deployment:  `npx hardhat verify --network ropsten <FW7_TOKEN_ADDRESS>`
 - Verify FW7Bridge deployment: `npx hardhat verify --network ropsten <FW7_BRIDGE_ADDRESS> "<FW7_TOKEN_ADDRESS>"`
 
-1. Deploy XFW7 Token and XFW7 Token Bridge on Rinkeby.
+4. Deploy XFW7 Token and XFW7 Token Bridge on Rinkeby.
 
 `evm-token-bridge> cd sol`
             
@@ -52,7 +52,7 @@ XFW7Bridge deployed to: 0x...
 - Verify XFW7Token deployment:  `npx hardhat verify --network rinkeby <XFW7_TOKEN_ADDRESS>`
 - Verify XFW7Bridge deployment: `npx hardhat verify --network rinkeby <XFW7_BRIDGE_ADDRESS> "<XFW7_TOKEN_ADDRESS>"`
 
-1. Copy the contracts json files if changed with the following powershell commands or execute `./copy_contracs.sh` in [wsl](https://docs.microsoft.com/en-us/windows/wsl/install).
+6. Copy the contracts json files if changed with the following powershell commands or execute `./copy_contracs.sh` in [wsl](https://docs.microsoft.com/en-us/windows/wsl/install).
 
 `evm-token-bridge> copy sol\artifacts\contracts\FW7Token.sol\FW7Token.json web\src\constants\abis`
 
