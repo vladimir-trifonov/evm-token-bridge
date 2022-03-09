@@ -32,7 +32,7 @@ FW7Token deployed to: 0x...
 FW7Bridge deployed to: 0x...
 ```
 
-**Optional: Verify contracts deployment(Require: ETHERSCAN_API_KEY in .env)**
+**Verify contracts deployment(Require: ETHERSCAN_API_KEY in .env)**
 - Verify FW7Token deployment:  `npx hardhat verify --network ropsten <FW7_TOKEN_ADDRESS>`
 - Verify FW7Bridge deployment: `npx hardhat verify --network ropsten <FW7_BRIDGE_ADDRESS> "<FW7_TOKEN_ADDRESS>"`
 
@@ -48,31 +48,11 @@ XFW7Token deployed to: 0x...
 XFW7Bridge deployed to: 0x...
 ```
 
-**Optional: Verify contracts deployment(Require: ETHERSCAN_API_KEY in .env)**
+**Verify contracts deployment(Require: ETHERSCAN_API_KEY in .env)**
 - Verify XFW7Token deployment:  `npx hardhat verify --network rinkeby <XFW7_TOKEN_ADDRESS>`
 - Verify XFW7Bridge deployment: `npx hardhat verify --network rinkeby <XFW7_BRIDGE_ADDRESS> "<XFW7_TOKEN_ADDRESS>"`
 
-6. Copy the contracts json files if changed with the following powershell commands or execute `./copy_contracs.sh` in [wsl](https://docs.microsoft.com/en-us/windows/wsl/install).
-
-`evm-token-bridge> copy sol\artifacts\contracts\FW7Token.sol\FW7Token.json web\src\constants\abis`
-
-`evm-token-bridge> copy sol\artifacts\contracts\XFW7Token.sol\XFW7Token.json web\src\constants\abis`
-
-`evm-token-bridge> copy sol\artifacts\contracts\FW7Bridge.sol\FW7Bridge.json web\src\constants\abis`
-
-`evm-token-bridge> copy sol\artifacts\contracts\XFW7Bridge.sol\XFW7Bridge.json web\src\constants\abis`
-
-`evm-token-bridge> copy sol\artifacts\contracts\Bridge.sol\Bridge.json sol-side-dev\contracts`
-
-`evm-token-bridge> copy sol\artifacts\contracts\IToken.sol\IToken.json sol-side-dev\contracts`
-
-`evm-token-bridge> copy sol\artifacts\contracts\XFW7Token.sol\XFW7Token.json sol-side-dev\contracts`
-
-`evm-token-bridge> copy sol\artifacts\contracts\XFW7Bridge.sol\XFW7Bridge.json sol-side-dev\contracts`
-
-`evm-token-bridge> copy sol\artifacts\contracts\FW7Bridge.sol\FW7Bridge.json api\abis`
-
-`evm-token-bridge> copy sol\artifacts\contracts\XFW7Bridge.sol\XFW7Bridge.json api\abis`
+6. (Optional) To copy the contracts json files if changed execute `evm-token-bridge> ./copy_contracts.sh`.
 
 7. Set the API environment variables in `evm-token-bridge\api\.env` with the contracts addresses being deployed.
             
@@ -109,5 +89,3 @@ REACT_APP_TRANSACTION_FEE_IN_ETH=0.005
 `evm-token-bridge> cd web`
 
 `evm-token-bridge\web> yarn start`
-
-11.  Open the app [http://localhost:3000/](http://localhost:3000/).
