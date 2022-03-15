@@ -2,7 +2,7 @@ import Card from "@mui/material/Card"
 import Box from "@mui/material/Box"
 import TextField from "@mui/material/TextField"
 import Button from "@mui/material/Button"
-import { isBaseChain } from "../helpers/utilities"
+import { isFW7Chain } from "../helpers/utilities"
 import { useRef, useState } from "react"
 import { IChainData } from "../types"
 
@@ -32,7 +32,7 @@ const TransferControls = ({ balance, chainData, onDeposit }: { balance: string, 
         <Button disabled={canDeposit()} color="secondary" onClick={() => {
           onDeposit(value)
           setValue("0")
-        }}>{isBaseChain(chainData?.chain_id) ? "Transfer" : "Request"}</Button>
+        }}>{isFW7Chain(chainData?.chain_id) ? "Transfer" : "Request"}</Button>
       </Box>
     </Card>
   )

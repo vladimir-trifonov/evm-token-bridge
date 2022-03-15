@@ -5,6 +5,7 @@
 1. [Install API](api/README.md#Installation)
 2. [Install Web](web/README.md#Installation)
 3. [Install Hardhat](sol/README.md#Installation)
+4. [Infura account](https://infura.io/))
 
 ### Deployment
 

@@ -1,23 +1,23 @@
 import { IChainData } from "../types"
-import supportedChains, { baseChainsIds, sideChainsIds } from "../constants/chains"
+import supportedChains, { fw7ChainIds, xfw7ChainsIds } from "../constants/chains"
 
-export function isBaseChain(chainId: number) {
-  return baseChainsIds.includes(chainId)
+export function isFW7Chain(chainId: number) {
+  return fw7ChainIds.includes(chainId)
 }
 
 export function getSupportedChains(chainId: number): IChainData[] {
-  return [chainId, (isBaseChain(chainId) ? sideChainsIds[baseChainsIds.indexOf(chainId)] : baseChainsIds[sideChainsIds.indexOf(chainId)])]
+  return [chainId, (isFW7Chain(chainId) ? xfw7ChainsIds[fw7ChainIds.indexOf(chainId)] : fw7ChainIds[xfw7ChainsIds.indexOf(chainId)])]
     .map((id) => supportedChains.find(({ chain_id }) => chain_id === id) as IChainData).filter((chainData) => !!chainData)
 }
 
 export function getTokenSymbol(chainId: number) {
-  return isBaseChain(chainId) ? "FW7" : "xFW7"
+  return isFW7Chain(chainId) ? "FW7" : "xFW7"
 }
 
 export function getProviderToChainData(network: any) {
-  const providerToChainId = isBaseChain(network.chainId) 
-    ? sideChainsIds[baseChainsIds.indexOf(network.chainId)] 
-    : baseChainsIds[sideChainsIds.indexOf(network.chainId)]
+  const providerToChainId = isFW7Chain(network.chainId) 
+    ? xfw7ChainsIds[fw7ChainIds.indexOf(network.chainId)] 
+    : fw7ChainIds[xfw7ChainsIds.indexOf(network.chainId)]
   const chainDataRaw = supportedChains.find((chainData) => chainData.chain_id === providerToChainId)
   return chainDataRaw ? getChainData(chainDataRaw.chain_id) : null
 }

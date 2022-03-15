@@ -1,7 +1,7 @@
 import { IChainData } from "../types"
 
-export const baseChainsIds = [3, 31337]
-export const sideChainsIds = [4, 2222]
+export const fw7ChainIds = [3, 31337]
+export const xfw7ChainsIds = [4, 2222]
 
 const supportedChains: IChainData[] = [
   {
