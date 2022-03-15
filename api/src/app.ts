@@ -20,7 +20,7 @@ const xfw7BridgeContract = new ethers.Contract(XFW7_BRIDGE_CONTRACT_ADDRESS, XFW
 async function listen() {
     const transaction = (bridgeContract) => async (_, receiver, amount, { transactionHash }) => {
         try {
-            const receipt = await bridgeContract.tokensBridged(receiver, amount, transactionHash, { gasLimit: parseInt(process.env.GAS_LIMIT) })
+            const receipt = await bridgeContract.tokensBridged(receiver, amount, transactionHash)
             console.log(`Transaction hash: ${receipt.hash}`)
             console.log(`Processed deposit - receiver ${receiver} - amount ${ethers.utils.formatEther(amount)} tokens`)
         } catch (e) { console.error(e) }

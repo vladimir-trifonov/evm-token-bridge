@@ -14,8 +14,6 @@ const baseChainBridgeAddress = process.env.REACT_APP_FW7_BRIDGE_ADDRESS as strin
 const sideChainTokenAddress = process.env.REACT_APP_XFW7_TOKEN_ADDRESS as string
 const sideChainBridgeAddress = process.env.REACT_APP_XFW7_BRIDGE_ADDRESS as string
 
-const fee = utils.parseEther(process.env.REACT_APP_TRANSACTION_FEE_IN_ETH as string)
-
 const useWeb3Contracts = (state: any): any => {
   const { web3ProviderFrom, web3ProviderTo, chainId, fromAddress, toAddress } = state
 
@@ -23,27 +21,30 @@ const useWeb3Contracts = (state: any): any => {
   const [toBalance, setToBalance] = useState("0")
   const [fromBridged, setFromBridged] = useState("0.0")
   const [toBridged, setToBridged] = useState("0.0")
+  const [fee, setFee] = useState(null)
 
   const [tokenFromContract, setTokenFromContract] = useState<null | any>(null)
   const [bridgeFromContract, setBridgeFromContract] = useState<null | any>(null)
   const [tokenToContract, setTokenToContract] = useState<null | any>(null)
   const [bridgeToContract, setBridgeToContract] = useState<null | any>(null)
 
-  const getContracts = useCallback(async function () {
+  const getContractsAndConsts = useCallback(async function () {
     try {
       const isProviderFromBaseChain = isBaseChain(chainId)
       const baseChainProvider = isProviderFromBaseChain ? web3ProviderFrom : web3ProviderTo
       const sideChainProvider = isProviderFromBaseChain ? web3ProviderTo : web3ProviderFrom
   
-      const fw7TokenContract = getContract(baseChainTokenAddress as string, FW7Token.abi, isProviderFromBaseChain ? baseChainProvider.getSigner() : baseChainProvider)
-      const fw7BridgeContract = getContract(baseChainBridgeAddress as string, FW7Bridge.abi, isProviderFromBaseChain ? baseChainProvider.getSigner() : baseChainProvider)
-      const xFw7TokenContract = getContract(sideChainTokenAddress as string, XFW7Token.abi, isProviderFromBaseChain ? sideChainProvider : sideChainProvider.getSigner())
-      const xFfw7BridgeContract = getContract(sideChainBridgeAddress as string, XFW7Bridge.abi, isProviderFromBaseChain ? sideChainProvider : sideChainProvider.getSigner())
-  
+      const fw7TokenContract = getContract(baseChainTokenAddress as string, FW7Token.abi, baseChainProvider.getSigner())
+      const fw7BridgeContract = getContract(baseChainBridgeAddress as string, FW7Bridge.abi, baseChainProvider.getSigner())
+      const xFw7TokenContract = getContract(sideChainTokenAddress as string, XFW7Token.abi, sideChainProvider.getSigner())
+      const xFfw7BridgeContract = getContract(sideChainBridgeAddress as string, XFW7Bridge.abi, sideChainProvider.getSigner())
+
       setTokenFromContract(isProviderFromBaseChain ? fw7TokenContract : xFw7TokenContract)
       setBridgeFromContract(isProviderFromBaseChain ? fw7BridgeContract : xFfw7BridgeContract)
       setTokenToContract(isProviderFromBaseChain ? xFw7TokenContract : fw7TokenContract)
       setBridgeToContract(isProviderFromBaseChain ? xFfw7BridgeContract : fw7BridgeContract)
+
+      setFee(await fw7BridgeContract.fee())
     } catch (e: any) {
       toast.info(e.message)
       console.warn(e)
@@ -55,15 +56,16 @@ const useWeb3Contracts = (state: any): any => {
     setBridgeFromContract(null)
     setTokenToContract(null)
     setBridgeToContract(null)
+    setFee(null)
   }
 
   useEffect(() => {
     if (web3ProviderFrom && web3ProviderTo && chainId) {
-      getContracts()
+      getContractsAndConsts()
     } else {
       clearContracts()
     }
-  }, [chainId, getContracts, web3ProviderFrom, web3ProviderTo])
+  }, [chainId, getContractsAndConsts, web3ProviderFrom, web3ProviderTo])
 
   const getToBalance = useCallback(async () => {
     try {
@@ -125,6 +127,7 @@ const useWeb3Contracts = (state: any): any => {
 
   const onDeposit = async (amount: string) => {
     try {
+      debugger
       const amountInEth = utils.parseEther(amount)
       const { deadline, v, r, s } = await signERC2612Permit(
         window.ethereum,
@@ -133,6 +136,7 @@ const useWeb3Contracts = (state: any): any => {
         bridgeFromContract.address, 
         amountInEth.toString()
       )
+      debugger
       const transaction = await bridgeFromContract
         .depositTokens(toAddress, amountInEth, deadline, v, r, s, isBaseChain(chainId) ? { value: fee } : {})
       await transaction.wait()

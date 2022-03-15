@@ -7,7 +7,16 @@ import "./Bridge.sol";
 contract XFW7Bridge is Bridge {
     constructor(address _token) Bridge(_token) {}
 
-    function depositTokens(address _receiver, uint256 _amount) external {
+    function depositTokens(
+        address _receiver,
+        uint256 _amount,
+        uint256 _deadline,
+        uint8 _v,
+        bytes32 _r,
+        bytes32 _s
+    ) external {
+        require(_amount > 0, "Insufficient tokens");
+        token.permit(msg.sender, address(this), _amount, _deadline, _v, _r, _s);
         token.burnFrom(msg.sender, _amount);
         emit DepositTokens(msg.sender, _receiver, _amount);
     }

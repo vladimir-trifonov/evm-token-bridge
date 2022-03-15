@@ -22,7 +22,7 @@ export interface XFW7BridgeInterface extends utils.Interface {
   functions: {
     "bridged(address)": FunctionFragment;
     "claimTokens()": FunctionFragment;
-    "depositTokens(address,uint256)": FunctionFragment;
+    "depositTokens(address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "owner()": FunctionFragment;
     "processedHashes(bytes32)": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -39,7 +39,14 @@ export interface XFW7BridgeInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "depositTokens",
-    values: [string, BigNumberish]
+    values: [
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BytesLike,
+      BytesLike
+    ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -184,6 +191,10 @@ export interface XFW7Bridge extends BaseContract {
     depositTokens(
       _receiver: string,
       _amount: BigNumberish,
+      _deadline: BigNumberish,
+      _v: BigNumberish,
+      _r: BytesLike,
+      _s: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -227,6 +238,10 @@ export interface XFW7Bridge extends BaseContract {
   depositTokens(
     _receiver: string,
     _amount: BigNumberish,
+    _deadline: BigNumberish,
+    _v: BigNumberish,
+    _r: BytesLike,
+    _s: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -265,6 +280,10 @@ export interface XFW7Bridge extends BaseContract {
     depositTokens(
       _receiver: string,
       _amount: BigNumberish,
+      _deadline: BigNumberish,
+      _v: BigNumberish,
+      _r: BytesLike,
+      _s: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -357,6 +376,10 @@ export interface XFW7Bridge extends BaseContract {
     depositTokens(
       _receiver: string,
       _amount: BigNumberish,
+      _deadline: BigNumberish,
+      _v: BigNumberish,
+      _r: BytesLike,
+      _s: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -404,6 +427,10 @@ export interface XFW7Bridge extends BaseContract {
     depositTokens(
       _receiver: string,
       _amount: BigNumberish,
+      _deadline: BigNumberish,
+      _v: BigNumberish,
+      _r: BytesLike,
+      _s: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
