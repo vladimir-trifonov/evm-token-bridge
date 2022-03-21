@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState, Dispatch } from "react"
 import WalletConnectProvider from "@walletconnect/web3-provider"
 import { providers } from "ethers"
 import Web3Modal from "web3modal"
-import { toast } from 'react-toastify'
+import { toast } from "react-toastify"
 
 import { getChainData, getProviderToChainData, getSupportedChains } from "../helpers/utilities"
-import { IChainData } from "../types"
+import { IChainData, StateType } from "../types"
 
 const INFURA_ID = process.env.REACT_APP_INFURA_ID
 
@@ -18,7 +18,7 @@ const providerOptions = {
   }
 }
 
-let web3Modal: any
+let web3Modal: Web3Modal
 if (typeof window !== "undefined") {
   web3Modal = new Web3Modal({
     cacheProvider: true,
@@ -26,7 +26,7 @@ if (typeof window !== "undefined") {
   })
 }
 
-const useWeb3Connect = (state: any, dispatch: any): any => {
+const useWeb3Connect = (state: StateType, dispatch: Dispatch<any>): any => {
   const { providerFrom, chainId } = state
   const [providerToChainData, setProviderToChainData] = useState<null | IChainData>(null)
 
@@ -67,7 +67,6 @@ const useWeb3Connect = (state: any, dispatch: any): any => {
       })
     } catch (e: any) {
       toast.info(e.message)
-      console.warn(e)
     }
   }, [dispatch])
 
@@ -83,7 +82,6 @@ const useWeb3Connect = (state: any, dispatch: any): any => {
         })
       } catch (e: any) {
         toast.info(e.message)
-        console.warn(e)
       }
     },
     [dispatch, providerFrom]
@@ -130,12 +128,12 @@ const useWeb3Connect = (state: any, dispatch: any): any => {
 
   const chainDataFrom = getChainData(chainId)
   const chainDataTo = providerToChainData
-  const supportedChains = getSupportedChains(chainId)
+  const supportedChains = getSupportedChains(chainId!)
 
-  const onNetworkChange = async ({ target: { value: chainId }}: { target: any }) => {
+  const onNetworkChange = async ({ target: { value: chainId }}: { target: { value: number } }) => {
     if (window.ethereum) {
       try {
-        await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: `0x${Number(chainId).toString(16)}` }] })
+        await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: `0x${Number(chainId).toString(16)}` }] })
       } catch (error) {
         console.error(error)
       }

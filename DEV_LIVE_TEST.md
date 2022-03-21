@@ -85,6 +85,7 @@ REACT_APP_FW7_TOKEN_ADDRESS=// The token contract address from `step 4`
 REACT_APP_FW7_BRIDGE_ADDRESS=// The bridge contract address from `step 4`
 REACT_APP_XFW7_TOKEN_ADDRESS=// The token contract address from `step 6`
 REACT_APP_XFW7_BRIDGE_ADDRESS=// The bridge contract address from `step 6`
+GENERATE_SOURCEMAP=false
 ```
 
 11. Start the React App.

@@ -5,23 +5,30 @@ import Toolbar from "@mui/material/Toolbar"
 import Typography from "@mui/material/Typography"
 import Button from "@mui/material/Button"
 import Container from "@mui/material/Container"
+import { toast } from "react-toastify"
+import { useReducer, useEffect } from "react"
+import { useErrorBoundary } from "use-error-boundary"
 
 import useWeb3Connect from "./hooks/useWeb3Connect"
 import useWeb3Contracts from "./hooks/useWeb3Contracts"
 import NetworkInfo from "./components/NetworkInfo"
 import Bridge from "./components/Bridge"
 import reducer, { initialState } from "./reducer"
-import { useReducer } from "react"
-import { useErrorBoundary } from "use-error-boundary"
 
 export const Home = (): JSX.Element => {
-  const { ErrorBoundary } = useErrorBoundary()
+  const { ErrorBoundary, didCatch, error } = useErrorBoundary()
   const [state, dispatch] = useReducer(reducer, initialState)
   const [
     { connect, disconnect, onNetworkChange }, 
     { chainDataFrom, chainDataTo, web3ProviderFrom, fromAddress, toAddress, supportedChains }
   ] = useWeb3Connect(state, dispatch)
   const [{ onDeposit, onClaim, onReturn }, { from, to }] = useWeb3Contracts(state)
+
+  useEffect(() => {
+    if (didCatch && error) {
+      toast.error(error.message)
+    }
+  }, [didCatch, error])
 
   return (
     <ErrorBoundary>

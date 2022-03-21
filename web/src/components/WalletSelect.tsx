@@ -3,10 +3,11 @@ import Select from "@mui/material/Select"
 import MenuItem from "@mui/material/MenuItem"
 import Typography from "@mui/material/Typography"
 import Box from "@mui/material/Box"
+import { useEffect, useState } from "react"
+
 import { IChainData } from "../types"
 import { getTokenSymbol, ellipseAddress } from "../helpers/utilities"
 import TokenClaim from "./TokenClaim"
-import { useEffect, useState } from "react"
 
 const WalletSelect = ({ canChangeNetwork, chainData, contracts, onNetworkChange, supportedChains, onClaim, onReturn }: { 
   canChangeNetwork: boolean,

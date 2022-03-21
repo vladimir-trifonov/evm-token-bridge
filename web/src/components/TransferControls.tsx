@@ -2,11 +2,12 @@ import Card from "@mui/material/Card"
 import Box from "@mui/material/Box"
 import TextField from "@mui/material/TextField"
 import Button from "@mui/material/Button"
-import { isFW7Chain } from "../helpers/utilities"
 import { useRef, useState } from "react"
+
+import { isFW7Chain } from "../helpers/utilities"
 import { IChainData } from "../types"
 
-const TransferControls = ({ balance, chainData, onDeposit }: { balance: string, chainData: IChainData, onDeposit: any }): JSX.Element => {
+const TransferControls = ({ balance, chainData, onDeposit }: { balance: string, chainData: IChainData, onDeposit: (value: string) => void }): JSX.Element => {
   const [value, setValue] = useState("0") 
   const valueRef = useRef("")
 

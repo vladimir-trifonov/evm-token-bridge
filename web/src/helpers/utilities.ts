@@ -1,3 +1,5 @@
+import { providers } from "ethers"
+
 import { IChainData } from "../types"
 import supportedChains, { fw7ChainIds, xfw7ChainsIds } from "../constants/chains"
 
@@ -14,7 +16,7 @@ export function getTokenSymbol(chainId: number) {
   return isFW7Chain(chainId) ? "FW7" : "xFW7"
 }
 
-export function getProviderToChainData(network: any) {
+export function getProviderToChainData(network: providers.Network) {
   const providerToChainId = isFW7Chain(network.chainId) 
     ? xfw7ChainsIds[fw7ChainIds.indexOf(network.chainId)] 
     : fw7ChainIds[xfw7ChainsIds.indexOf(network.chainId)]

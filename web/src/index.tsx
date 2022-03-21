@@ -1,12 +1,12 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import { ThemeProvider, createTheme } from "@mui/material"
-import { toast, ToastContainer } from 'react-toastify'
+import { toast, ToastContainer } from "react-toastify"
 
 import "./index.css"
 import App from "./App"
 import reportWebVitals from "./reportWebVitals"
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css"
 
 const darkTheme = createTheme({
   palette: {
