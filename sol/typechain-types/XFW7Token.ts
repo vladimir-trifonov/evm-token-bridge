@@ -274,8 +274,8 @@ export interface XFW7Token extends BaseContract {
     ): Promise<ContractTransaction>;
 
     mintTo(
-      recipient: string,
-      amount: BigNumberish,
+      _recipient: string,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -372,8 +372,8 @@ export interface XFW7Token extends BaseContract {
   ): Promise<ContractTransaction>;
 
   mintTo(
-    recipient: string,
-    amount: BigNumberish,
+    _recipient: string,
+    _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -464,8 +464,8 @@ export interface XFW7Token extends BaseContract {
     ): Promise<boolean>;
 
     mintTo(
-      recipient: string,
-      amount: BigNumberish,
+      _recipient: string,
+      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -594,8 +594,8 @@ export interface XFW7Token extends BaseContract {
     ): Promise<BigNumber>;
 
     mintTo(
-      recipient: string,
-      amount: BigNumberish,
+      _recipient: string,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -696,8 +696,8 @@ export interface XFW7Token extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     mintTo(
-      recipient: string,
-      amount: BigNumberish,
+      _recipient: string,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

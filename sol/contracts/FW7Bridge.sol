@@ -2,9 +2,10 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./Bridge.sol";
 
-contract FW7Bridge is Bridge {
+contract FW7Bridge is ReentrancyGuard, Bridge {
     uint256 public locked;
     uint256 public fee = 0.005 ether;
 
@@ -22,7 +23,8 @@ contract FW7Bridge is Bridge {
         uint8 _v,
         bytes32 _r,
         bytes32 _s
-    ) public payable requireFee {
+    ) public payable virtual requireFee nonReentrant {
+        require(_receiver != address(0), "Wrong receiver");
         require(_amount > 0, "Insufficient tokens");
         locked += _amount;
         require(locked >= _amount, "Total locked overflow");
@@ -38,7 +40,8 @@ contract FW7Bridge is Bridge {
         address _receiver,
         uint256 _amount,
         bytes32 _otherChainTransactionHash
-    ) external onlyOwner {
+    ) external virtual onlyOwner {
+        require(_receiver != address(0), "Wrong receiver");
         require(_amount > 0, "Insufficient tokens");
         require(
             processedHashes[_otherChainTransactionHash] == false,
@@ -50,7 +53,7 @@ contract FW7Bridge is Bridge {
         emit TokensBridged(_receiver, _amount, _otherChainTransactionHash);
     }
 
-    function claimTokens() external payable requireFee {
+    function claimTokens() external payable virtual requireFee nonReentrant {
         uint256 amount = bridged[msg.sender];
         require(amount > 0, "Insufficient tokens");
         require(locked >= amount, "Insufficient locked tokens");
@@ -60,14 +63,20 @@ contract FW7Bridge is Bridge {
         emit ClaimTokens(msg.sender, amount);
     }
 
-    function returnTokens(address _receiver) external payable requireFee {
+    function returnTokens(address _receiver)
+        external
+        payable
+        virtual
+        requireFee
+    {
+        require(_receiver != address(0), "Wrong receiver");
         uint256 amount = bridged[msg.sender];
         require(amount > 0, "Insufficient bridged tokens");
         delete bridged[msg.sender];
         emit ReturnTokens(msg.sender, _receiver, amount);
     }
 
-    function withdraw() external onlyOwner {
+    function withdraw() external virtual onlyOwner {
         payable(owner()).transfer(address(this).balance);
     }
 }

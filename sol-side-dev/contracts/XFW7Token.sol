@@ -21,7 +21,7 @@ contract XFW7Token is ERC20Permit, ERC20Burnable, Ownable {
         gateway = _gateway;
     }
 
-    function mintTo(address recipient, uint256 amount) external onlyGateway {
-        _mint(recipient, amount);
+    function mintTo(address _recipient, uint256 _amount) external onlyGateway {
+        _mint(_recipient, _amount);
     }
 }
