@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "TS_NODE_TRANSPILE_ONLY=1 npx hardhat coverage"
+    "test": "cross-env TS_NODE_TRANSPILE_ONLY=1 npx hardhat coverage"
   },
   "author": "Vladimir Trifonov",
   "license": "ISC",
@@ -23,6 +23,7 @@
     "@typescript-eslint/eslint-plugin": "5.12.1",
     "@typescript-eslint/parser": "5.12.1",
     "chai": "4.3.6",
+    "cross-env": "7.0.3",
     "dotenv": "16.0.0",
     "eslint": "8.9.0",
     "eslint-config-prettier": "8.4.0",
