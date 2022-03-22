@@ -15,7 +15,7 @@ import NetworkInfo from "./components/NetworkInfo"
 import Bridge from "./components/Bridge"
 import reducer, { initialState } from "./reducer"
 
-export const Home = (): JSX.Element => {
+export const App = (): JSX.Element => {
   const { ErrorBoundary, didCatch, error } = useErrorBoundary()
   const [state, dispatch] = useReducer(reducer, initialState)
   const [
@@ -80,4 +80,4 @@ export const Home = (): JSX.Element => {
   )
 }
 
-export default Home
+export default App
