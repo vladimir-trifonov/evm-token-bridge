@@ -173,7 +173,7 @@ const useWeb3Contracts = (state: StateType) => {
   }
 
   useEffect(() => {
-    if (bridgeFromContract?.on) {
+    if (bridgeFromContract?.on && !!fromAddress) {
       const bridgeReturnFromFilter = bridgeFromContract.filters.ReturnTokens(fromAddress)
       bridgeFromContract.on(bridgeReturnFromFilter, getFromBridged)
 
@@ -186,7 +186,7 @@ const useWeb3Contracts = (state: StateType) => {
   }, [bridgeFromContract, fromAddress, getFromBridged])
 
   useEffect(() => {
-    if (bridgeFromContract?.on) {
+    if (bridgeFromContract?.on && !!fromAddress) {
       const handleClaimTokens = () => {
         getFromBalance()
         getFromBridged()
@@ -204,7 +204,7 @@ const useWeb3Contracts = (state: StateType) => {
   }, [bridgeFromContract, fromAddress, getFromBalance, getFromBridged])
 
   useEffect(() => {
-    if (bridgeFromContract?.on) {
+    if (bridgeFromContract?.on && !!fromAddress) {
       const bridgeDepositFromFilter = bridgeFromContract.filters.DepositTokens(fromAddress)
       bridgeFromContract.on(bridgeDepositFromFilter, getFromBalance)
 
@@ -217,7 +217,7 @@ const useWeb3Contracts = (state: StateType) => {
   }, [bridgeFromContract, fromAddress, getFromBalance])
 
   useEffect(() => {
-    if (bridgeToContract?.on) {
+    if (bridgeToContract?.on && !!toAddress) {
       const bridgeBridgedToFilter = bridgeToContract.filters.TokensBridged(toAddress)
       bridgeToContract.on(bridgeBridgedToFilter, getToBridged)
 
